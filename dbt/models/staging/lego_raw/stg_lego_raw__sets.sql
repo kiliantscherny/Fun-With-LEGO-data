@@ -10,8 +10,8 @@ renamed AS (
 
     SELECT
         set_num,
-        name,
-        year,
+        name AS set_name,
+        year AS release_year,
         theme_id,
         num_parts,
         img_url,
