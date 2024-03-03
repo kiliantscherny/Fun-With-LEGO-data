@@ -9,9 +9,9 @@ source AS (
 renamed AS (
 
     SELECT
-        id,
-        name,
-        rgb,
+        id AS color_id,
+        name AS color_name,
+        rgb AS rgb_code,
         is_trans,
         inserted_at
 
