@@ -23,3 +23,6 @@ models:
 
       - name: is_trans
         description: Whether or not the given color is transparent/translucent
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database
