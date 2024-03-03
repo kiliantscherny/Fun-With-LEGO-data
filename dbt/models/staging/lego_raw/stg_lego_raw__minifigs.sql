@@ -10,7 +10,7 @@ renamed AS (
 
     SELECT
         fig_num,
-        name,
+        name AS fig_name,
         num_parts,
         img_url,
         inserted_at
