@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: lego_raw
+    database: "dtc-de-kilian"
+    tables:
+      - name: colors
+      - name: elements
+      - name: inventories
+      - name: inventory_minifigs
+      - name: inventory_parts
+      - name: inventory_sets
+      - name: minifigs
+      - name: part_categories
+      - name: part_relationships
+      - name: parts
+      - name: sets
+      - name: themes
