@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__part_relationships
+    description: >
+      This table includes information on the different relationships of parts.
+
+    columns:
+      - name: rel_type
+        description: Relationship type of the part
+        tests:
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+
+      - name: child_part_num
+        description: Child part category ID
+
+      - name: parent_part_num
+        description: Parent category unique ID
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database
