@@ -54,8 +54,8 @@ OUTPUT_PARQUET_FILE_NAMES = [
 local_workflow = DAG(
     "LEGO_DATA_INGESTION",
     schedule_interval="0 7 * * 1",  # Run the DAG every Monday at 7:00 AM
-    start_date=datetime(2024, 2, 1),
-    end_date=datetime(2024, 2, 13),
+    start_date=datetime(2024, 3, 1),
+    # end_date=datetime(2024, 2, 13),
     max_active_runs=1,  # Limits concurrent runs to 3
     default_args={"retries": 3},  # Set the number of retries to 3
     tags=["Lego Data"],
