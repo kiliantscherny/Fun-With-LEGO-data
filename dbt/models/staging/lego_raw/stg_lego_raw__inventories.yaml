@@ -19,3 +19,6 @@ models:
 
       - name: set_num
         description: The set number
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database
