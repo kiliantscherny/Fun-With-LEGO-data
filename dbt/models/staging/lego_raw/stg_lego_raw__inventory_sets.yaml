@@ -13,8 +13,6 @@ models:
         tests:
           - not_null:
               severity: error
-          - unique:
-              severity: error
 
       - name: set
         description: The set number

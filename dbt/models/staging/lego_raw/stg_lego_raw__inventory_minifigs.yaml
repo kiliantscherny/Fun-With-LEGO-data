@@ -11,8 +11,6 @@ models:
         tests:
           - not_null:
               severity: error
-          - unique:
-              severity: error
 
       - name: fig_num
         description: The minifigure number

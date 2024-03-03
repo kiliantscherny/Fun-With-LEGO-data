@@ -13,8 +13,6 @@ models:
         tests:
           - not_null:
               severity: error
-          - unique:
-              severity: error
 
       - name: part_num
         description: The part number

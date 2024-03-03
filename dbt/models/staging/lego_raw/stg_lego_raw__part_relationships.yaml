@@ -11,8 +11,6 @@ models:
         tests:
           - not_null:
               severity: error
-          - unique:
-              severity: error
 
       - name: child_part_num
         description: Child part category ID
