@@ -10,7 +10,7 @@ renamed AS (
 
     SELECT
         part_num,
-        name,
+        name AS part_name,
         part_cat_id,
         part_material,
         inserted_at
