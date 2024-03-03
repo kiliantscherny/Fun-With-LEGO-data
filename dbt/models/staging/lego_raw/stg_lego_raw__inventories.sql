@@ -9,8 +9,8 @@ source AS (
 renamed AS (
 
     SELECT
-        id,
-        version,
+        id AS inventory_id,
+        version AS inventory_version,
         set_num,
         inserted_at
 
