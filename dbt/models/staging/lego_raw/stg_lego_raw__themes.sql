@@ -9,8 +9,8 @@ source AS (
 renamed AS (
 
     SELECT
-        id,
-        name,
+        id AS theme_id,
+        name AS theme_name,
         parent_id,
         inserted_at
 
