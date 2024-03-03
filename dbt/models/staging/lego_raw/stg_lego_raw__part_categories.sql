@@ -9,8 +9,8 @@ source AS (
 renamed AS (
 
     SELECT
-        id,
-        name,
+        id AS part_category_id,
+        name AS part_category_name,
         inserted_at
 
     FROM source
