@@ -1,0 +1,188 @@
+## -- SQLFLUFF CONFIGURATION -- ##
+# See: https://docs.sqlfluff.com/en/2.3.2/configuration.html
+# and: https://docs.sqlfluff.com/en/stable/configuration.html#installation-configuration
+
+[sqlfluff]
+dialect = bigquery
+templater = dbt
+runaway_limit = 10
+max_line_length = 100
+
+
+## -- INDENTATION -- ##
+
+# Use 4 spaces to indent
+[sqlfluff:indentation]
+indent_unit = space
+tab_space_size = 4
+
+# Indent Jinja blocks
+# See: https://docs.sqlfluff.com/en/stable/layout.html#templated-indents
+template_blocks_indent = True
+
+# Enables implicit indenting to facilitate legibility
+# See: https://docs.sqlfluff.com/en/stable/layout.html#implicitindents
+allow_implicit_indents = True
+
+# Allows indenting the ON in a JOIN
+# See: https://docs.sqlfluff.com/en/stable/layout.html#configuring-indent-locations
+indented_using_on = False
+
+
+
+## -- LAYOUT -- ##
+
+# Enforce trailing commas
+# See: https://docs.sqlfluff.com/en/stable/layout.html#configuring-layout-and-spacing
+[sqlfluff:layout:type:comma]
+spacing_before = touch
+line_position = trailing
+
+# Flag inappropriate spacing
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#inappropriate-spacing
+[sqlfluff:rules:layout.spacing]
+allow_leading_space = False
+allow_trailing_space = False
+
+# Use 4 spaces for indentation
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#incorrect-indentation
+[sqlfluff:rules:layout.indent]
+indent_unit = space
+tab_space_size = 4
+
+# DISTINCT should be on same line as SELECT
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#select-modifiers-e-g-distinct-must-be-on-the-same-line-as-select
+[sqlfluff:rules:layout.select_modifiers]
+select_modifier_on_same_line = True
+
+# Enforce a new line between CTEs
+# See: https://docs.sqlfluff.com/en/stable/rules.html#blank-line-expected-but-not-found-after-cte-closing-bracket
+[sqlfluff:rules:layout.cte_newline]
+cte_newline = True
+
+# Enforce WITH clause closing bracket on a new line
+# See: https://docs.sqlfluff.com/en/stable/rules.html#with-clause-closing-bracket-should-be-on-a-new-line
+[sqlfluff:rules:layout.cte_bracket]
+cte_bracket_newline = True
+
+# Enforce operators (+ / -) after newlines
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-layout.operators
+[sqlfluff:rules:layout.operators]
+operator_new_lines = after
+
+
+
+
+## -- ALIASING -- ##
+
+# Enforce explicit aliasing of a table
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#implicit-explicit-aliasing-of-table
+[sqlfluff:rules:aliasing.table]
+aliasing = explicit
+
+# Enforce explicit aliasing of a column
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#implicit-explicit-aliasing-of-columns
+[sqlfluff:rules:aliasing.column]
+aliasing = explicit
+
+# Enforce table alias lengths with a minimum of 3 characters (i.e. abc instead of a or ab)
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#enforce-table-alias-lengths-in-from-clauses-and-join-conditions
+[sqlfluff:rules:aliasing.length]
+min_alias_length = 3
+
+# Remove unused table alias
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-aliasing.unused
+[sqlfluff:rules:aliasing.unused]
+
+
+
+## -- AMBIGUITY -- ##
+
+# Remove ambigiuous use of DISTINCT in a SELECT statement with GROUP BY
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-ambiguous.distinct
+[sqlfluff:rules:ambiguous.distinct]
+
+# Enforce non-ambiguous ordering directions for columns in order by clause
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-ambiguous.order_by
+[sqlfluff:rules:ambiguous.order_by]
+
+# Enforce that somewhere along the “path” to the source data, the columns are explicitly specified
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-ambiguous.column_count
+[sqlfluff:rules:ambiguous.column_count]
+
+# Enforce consistent column references in GROUP BY / ORDER BY clauses (i.e. GROUP BY 1, 2 – not GROUP BY id, 2)
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#inconsistent-column-references-in-group-by-order-by-clauses
+[sqlfluff:rules:ambiguous.column_references]
+group_by_and_order_by_style = consistent
+
+
+
+## -- CAPITALISATION -- ##
+
+# Capitalise all SQL keywords
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#inconsistent-capitalisation-of-keywords
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = upper
+
+# Capitalise all SQL functions
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#inconsistent-capitalisation-of-unquoted-identifiers
+[sqlfluff:rules:capitalisation.functions]
+extended_capitalisation_policy = upper
+
+# Lowercase all unquoted identifiers (i.e. column name aliases)
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#inconsistent-capitalisation-of-unquoted-identifiers
+[sqlfluff:rules:capitalisation.identifiers]
+extended_capitalisation_policy = lower
+unquoted_identifiers_policy = column_aliases
+
+# Ensure NULL, TRUE, FALSE are capitalised
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#inconsistent-capitalisation-of-keywords
+[sqlfluff:rules:capitalisation.literals]
+capitalisation_policy = upper
+
+# Ensure datatypes are capitalised (e.g. INT, VARCHAR, STRING etc.)
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#inconsistent-capitalisation-of-datatypes
+[sqlfluff:rules:capitalisation.types]
+capitalisation_policy = upper
+
+
+
+## -- CONVENTION -- ##
+
+# Use != instead of <> for "not equal to" comparisons
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-convention.not_equal
+[sqlfluff:rules:convention.not_equal]
+prefer = !=
+
+# Comparisons with NULL should use “IS” or “IS NOT”
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-convention.is_null
+[sqlfluff:rules:convention.is_null]
+
+# Use LEFT JOIN instead of RIGHT JOIN
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-convention.left_join
+[sqlfluff:rules:convention.left_join]
+
+
+
+## -- JINJA -- ##
+
+# Jinja tags should have a single whitespace on either side
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-jinja.padding
+[sqlfluff:rules:jinja.padding]
+
+
+
+## -- REFERENCE -- ##
+
+# References should be qualified if select has more than one referenced table/view
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-references.qualification
+[sqlfluff:rules:references.qualification]
+
+# References should be consistent in statements with a single table
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-references.consistent
+[sqlfluff:rules:references.consistent]
+
+## -- STRUCTURE -- ##
+# Select wildcards then simple targets before calculations and aggregates
+# See: https://docs.sqlfluff.com/en/2.3.2/rules.html#rule-structure.column_order
+[sqlfluff:rules:structure.column_order]
