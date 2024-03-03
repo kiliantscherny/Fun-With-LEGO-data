@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__minifigs
+    description: >
+      This table contains information on minifigures, 
+
+    columns:
+      - name: fig_num
+        description: Unique number for this minifigure
+        tests:
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+
+      - name: fig_name
+        description: The minifigure name
+
+      - name: img_url
+        description: Image URL of the minifigure
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database

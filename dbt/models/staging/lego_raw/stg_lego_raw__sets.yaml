@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__sets
+    description: >
+      This table contains information on LEGO sets, including a unique
+      ID number, the name of the set, the year it was released, its
+      theme and how many parts it includes.
+
+    columns:
+      - name: set_num
+        description: Unique set ID
+        tests:
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+
+      - name: set_name
+        description: The set's name
+
+      - name: release_year
+        description: Year the set was released
+
+      - name: theme_id
+        description: The set's theme ID
+
+      - name: num_parts
+        description: The number of parts in the set
+
+      - name: img_url
+        description: The set's image URL
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database

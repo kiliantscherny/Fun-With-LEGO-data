@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__themes
+    description: >
+      This table includes information on lego themes. Each theme
+      is given a unique ID number, a name, and (if it's part of
+      a bigger theme) which theme it's part of
+
+    columns:
+      - name: theme_id
+        description: Unique theme ID
+        tests:
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+
+      - name: theme_name
+        description: The theme's name
+
+      - name: parent_id
+        description: Unique ID for the larger theme, if there is one
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database

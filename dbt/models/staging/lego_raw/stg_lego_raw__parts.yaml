@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__parts
+    description: >
+      This table includes information on lego parts, including a unique
+      ID number, the name of the part, and what part category it's from
+
+    columns:
+      - name: part_num
+        description: The part number
+        tests:
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+
+      - name: part_name
+        description: The part name
+
+      - name: part_cat_id
+        description: Part category ID
+
+      - name: part_material
+        description: The part's material
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database

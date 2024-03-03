@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__colors
+    description: >
+      This file contains information on LEGO colors, including a unique ID for each color, 
+      its name, and approximate RGB value, and whether it's transparent
+
+    columns:
+      - name: color_id
+        description: Unique ID for this color
+        tests:
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+
+      - name: color_name
+        description: The human-readable name of the color
+
+      - name: rgb_code
+        description: The approximate RGB color
+
+      - name: is_trans
+        description: Whether or not the given color is transparent/translucent
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database

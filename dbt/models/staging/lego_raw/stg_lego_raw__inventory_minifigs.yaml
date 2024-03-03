@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__inventory_minifigs
+    description: >
+      This table contains information on inventory minifigs
+
+    columns:
+      - name: inventory_id
+        description: Unique ID for this inventory entry
+        tests:
+          - not_null:
+              severity: error
+
+      - name: fig_num
+        description: The minifigure number
+
+      - name: quantity
+        description: The number of minifigures
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database

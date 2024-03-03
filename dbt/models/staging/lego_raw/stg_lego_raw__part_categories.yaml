@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__part_categories
+    description: >
+      This table includes information on the part category (what type of
+      part it is) and a unique ID for that part category.
+
+    columns:
+      - name: part_category_id
+        description: Unique part category ID
+        tests:
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+
+      - name: part_category_name
+        description: The part category name
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database

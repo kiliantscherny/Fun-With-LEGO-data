@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__inventory_parts
+    description: >
+      This table contains information on part inventories, including a 
+      unique ID number, the part number, the color of the part, how many
+      are included and whether it's a spare
+
+    columns:
+      - name: inventory_id
+        description: Unique ID for this inventory entry
+        tests:
+          - not_null:
+              severity: error
+
+      - name: part_num
+        description: The part number
+
+      - name: color_id
+        description: The color ID
+
+      - name: quantity
+        description: >
+          The number of copies of this part included in the set
+
+      - name: is_spare
+        description: >
+          Whether or not this is a spare part. Spare parts are 
+          additional parts not needed to finish the set.
+
+      - name: img_url
+        description: The URL of the part's image
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database

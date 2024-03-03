@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__inventories
+    description: >
+      This table contains information on inventories, including a unique ID, its version and the set number.
+
+    columns:
+      - name: inventory_id
+        description: Unique ID for this inventory entry
+        tests:
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+
+      - name: inventory_version
+        description: Inventory version number
+
+      - name: set_num
+        description: The set number
+
+      - name: inserted_at
+        description: Timestamp of when the row was inserted into the database
