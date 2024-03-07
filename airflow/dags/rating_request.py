@@ -10,11 +10,11 @@ AIRFLOW_HOME = os.getenv("AIRFLOW_HOME")
 print(f"AIRFLOW_HOME: {AIRFLOW_HOME}")
 
 
-def fetch_rating(set_id):
+def fetch_rating(set_id, timeout=10):  # Set the timeout to 10 seconds by default
     url = API_ENDPOINT.format(set_id)
     print(f"Fetching rating for set {set_id}...")
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=timeout)  # Set the timeout here
         if response.status_code == 200:
             print(f"Successfully retrieved the rating for set {set_id}.")
             rating_data = response.json()
@@ -39,6 +39,15 @@ def fetch_rating(set_id):
                 "review_count": None,
                 "fetched_at": fetched_at,
             }
+    except requests.exceptions.Timeout:
+        print(f"Request timed out for set {set_id}. Skipping...")
+        fetched_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        return {
+            "set_num": set_id,
+            "rating": None,
+            "review_count": None,
+            "fetched_at": fetched_at,
+        }
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {str(e)}")
         fetched_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
