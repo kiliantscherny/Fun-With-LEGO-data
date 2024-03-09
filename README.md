@@ -141,3 +141,44 @@ And much, much more.
 
 
 ![Data Flow Diagram](images/data_flow_diagram.jpg)
+
+## How to reproduce this project locally
+
+### Prerequisites
+> [!CAUTION]
+> **You need *all* of the following to recreate this project locally**
+- A [Google Cloud](https://cloud.google.com/) account with the necessary permissions and APIs enabled (e.g. service accounts, plus the BigQuery and Cloud Storage APIs – all instructions on how to do this are covered in the [DTC course](https://github.com/DataTalksClub/data-engineering-zoomcamp))
+- [Python](https://www.python.org/downloads/) installed on your machine
+- [Terraform](https://developer.hashicorp.com/terraform/install) installed on your machine
+- [Docker](https://docs.docker.com/engine/install/) installed on your machine
+- A [dbt Cloud](https://www.getdbt.com/product/dbt-cloud) account (it's possible to do this with dbt Core, but this is not covered in this project)
+
+### Steps
+
+1. **Clone the repository to your machine**
+   ```bash
+   git clone
+2. **Terraform: to set up the infrastructure (GCP Cloud Storage & BigQuery)**
+   - `cd` to the `/infrastructure/` folder
+   - Update the following variables in the `variables.tf` file:
+       - `project_id` – your GCP project ID
+       - `bq_dataset_name` – the name of the BigQuery dataset you want to create where the raw data will be loaded
+       - `bucket_name` – the name of the bucket you want to create in Cloud Storage
+       - [optionally] the `region` and `location` if you want to change the default values
+   - Run `terraform init`, `terraform plan` and `terraform apply` to create the necessary infrastructure
+3. **Airflow: to set up the DAGs that Extract and Load the data**
+   - `cd` to the `/airflow/` folder
+   - Update the following variables in the `docker-compose.yaml` file:
+       - `GCP_PROJECT_ID` – your GCP project ID (the same as in the Terraform step)
+       - `GCP_GCS_BUCKET` – the name of the bucket you created in Cloud Storage (also the same as in the Terraform step)
+   - Run `docker-compose up -d` to start the Airflow webserver and scheduler
+   - Open `localhost:8080` in your browser and run the DAGs you want to extract and load the data
+   - [optionally] feel free to update the start and end dates (as well as the crontab) of each DAG to suit your needs if you wish to extract and load the data at different times
+4. **dbt Cloud: to transform your raw data into something useful**
+   - As mentioned above, you will need a dbt Cloud account to do this, but it's perfectly possible to do this with dbt Core (not covered in these instructions, but there are plenty of resources online to help you with this)
+   - Connect your BigQuery project to dbt Cloud by following [the guide](https://docs.getdbt.com/guides/bigquery?step=1)
+   - When everything is connected, you can execute `dbt build` to run and test the dbt models
+   - The transformed data will be stored in a new dataset in BigQuery
+5. **Connect your Looker Studio instance to your BigQuery project**
+   - Connect your BigQuery project to Looker Studio by following [the guide](https://support.google.com/looker-studio/answer/6370296?hl=en#zippy=%2Cin-this-article)
+   - You'll be able to generate insights based on the transformed data in BigQuery
