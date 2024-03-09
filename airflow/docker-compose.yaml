@@ -65,12 +65,6 @@ x-airflow-common:
     GCP_PROJECT_ID: 'dtc-de-kilian'
     GCP_GCS_BUCKET: 'lego-bucket-dtc-de-kilian'
 
-    # PG_HOST: ${PG_HOST}
-    # PG_USER: ${PG_USER}
-    # PG_PASSWORD: ${PG_PASSWORD}
-    # PG_PORT: ${PG_PORT}
-    # PG_DATABASE: ${PG_DATABASE}
-
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
