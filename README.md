@@ -157,7 +157,7 @@ And much, much more.
 
 1. **Clone the repository to your machine**
    ```bash
-   git clone
+   gh repo clone kiliantscherny/Fun-With-LEGO
 2. **Terraform: to set up the infrastructure (GCP Cloud Storage & BigQuery)**
    - `cd` to the `/infrastructure/` folder
    - Update the following variables in the `variables.tf` file:
