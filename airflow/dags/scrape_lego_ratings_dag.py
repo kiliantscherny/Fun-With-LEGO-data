@@ -18,7 +18,7 @@ local_workflow = DAG(
     "SCRAPE_LEGO_RATINGS_DAG",
     schedule_interval="0 8 * * 1",  # Run the DAG every Monday at 8:00 AM
     start_date=datetime(2024, 3, 1),
-    end_date=datetime(2024, 3, 7),
+    end_date=datetime(2024, 3, 9),
     max_active_runs=1,  # Limits concurrent runs to 3
     default_args={"retries": 3},  # Set the number of retries to 3
     tags=["Lego Data"],
@@ -37,7 +37,7 @@ with local_workflow:
     get_sets_by_year_task = PythonOperator(
         task_id="get_sets_by_year_task",
         python_callable=query_bigquery_table,
-        op_kwargs={"years": np.arange(2022, 2025).tolist()},  # Provide a list of years
+        op_kwargs={"years": np.arange(2020, 2025).tolist()},  # Provide a list of years
         dag=local_workflow,
     )
 
