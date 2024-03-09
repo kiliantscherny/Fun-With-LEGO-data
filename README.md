@@ -18,7 +18,7 @@
 ```
 
 <h1 align="center">Fun with LEGO data</h1>
-<p align="center">Data Talks Club Data Engineering ZoomCamp final project <img src="images/Lego-Bricks-Stacked.png" alt="Stacked Lego Bricks" height="15" width="15"> by Kilian Tscherny</p>
+<p align="center">Data Talks Club Data Engineering ZoomCamp final project <img src="images/Lego-Bricks-Stacked.png" alt="Stacked Lego Bricks" height="15" width="15"> by <a href="https://www.linkedin.com/in/kiliantscherny/"> Kilian Tscherny</a></p>
 
 ## Introduction
 LEGO is one of my favourite things in the world. I've been playing with it since I was a child and I still enjoy it today. I've always been fascinated by the endless possibilities of building something new and unique with just a few bricks. I also love the idea of reusing and repurposing old bricks to create something new. This is why I chose to work with LEGO data for my final project in the Data Talks Club Data Engineering ZoomCamp.
@@ -94,7 +94,50 @@ Brick Insights offers a Data Export via an API. The data is available in JSON fo
 ```
 
 ### LEGO's website
-LEGO's website offers a lot of information about their products. This includes general product information, set rating, the price and more. This information can be scraped from the website using a library like BeautifulSoup.
+LEGO's [website](https://www.lego.com/en-us) offers a lot of information about their products. This includes general product information, set rating, the price and more. This information can be scraped from the website using a library like BeautifulSoup.
 
 > [!WARNING]  
 > Scraping the LEGO website is at your own risk. Your IP address might also be blocked if you scrape too much data in too short a time.
+
+## Project
+
+### [The brief](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main/projects#problem-statement)
+
+>**Develop a dashboard with two tiles by:**
+>
+>- Selecting a dataset of interest (see Datasets)
+>- Creating a pipeline for processing this dataset and putting it to a datalake
+>- Creating a pipeline for moving the data from the lake to a data warehouse
+>- Transforming the data in the data warehouse: prepare it for the dashboard
+>- Building a dashboard to visualize the data
+
+### My topic
+I'm going to build a dashboard to visualize the data from the Rebrickable database, Brick Insights and LEGO's website.
+
+The dashboard will allow you to easily explore data about LEGO sets, enriched with information about their price, rating and more.
+
+This will empower you to answer questions like:
+- Are LEGO sets with more pieces higher rated on average?
+- What is the price per element for different sets?
+- Which themes have the greatest number of ratings?
+
+And much, much more.
+
+### My approach
+
+1. **Extract (`E`): Airflow & Python scripts**
+   - Download the complete Rebrickable database
+   - Use the Brick Insights API to get additional information
+   - Scrape LEGO's website for more information
+2. **Load (`L`): GCP Cloud Storage and BigQuery**
+   - Store the extracted data in a data lake
+   - Load the data into a data warehouse
+3. **Transform (`T`): dbt Cloud**
+   - Create a data pipeline for processing the different data sources
+   - Clean, test, and document the data to increase its usefulness for analytics
+4. **Visualize (`V`): Looker Studio**
+   - Connect it to the BigQuery project
+   - Build a dashboard to visualize the data
+
+
+![Data Flow Diagram](images/data_flow_diagram.jpg)
