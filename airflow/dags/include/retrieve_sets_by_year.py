@@ -26,6 +26,10 @@ def query_bigquery_table(years):
         # Append the set numbers for the current year to the list
         set_numbers.extend(df["set_number"].tolist())
 
-        print(f"Sets retrieved successfully for year {year}.")
+        # If set_numbers is not empty, then show a success message, or else say it failed
+        if set_numbers:
+            print(f"Sets retrieved successfully for year {year}.")
+        else:
+            print(f"Failed to retrieve sets for year {year}.")
 
     return set_numbers

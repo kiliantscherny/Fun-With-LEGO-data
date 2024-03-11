@@ -16,9 +16,9 @@ from airflow.providers.google.cloud.operators.bigquery import (
 )
 from airflow.utils.task_group import TaskGroup
 
-from download_rebrickable_files import download_files_callable
-from format_to_parquet import format_to_parquet_callable
-from upload_to_gcs import upload_to_gcs_callable
+from include.download_rebrickable_files import download_files_callable
+from include.format_to_parquet import format_to_parquet_callable
+from include.upload_to_gcs import upload_to_gcs_callable
 
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
 BUCKET = os.environ.get("GCP_GCS_BUCKET")
@@ -52,7 +52,7 @@ OUTPUT_PARQUET_FILE_NAMES = [
 ]
 
 local_workflow = DAG(
-    "LEGO_DATA_INGESTION",
+    "REBRICKABLE_DATA_INGESTION",
     schedule_interval="0 7 * * 1",  # Run the DAG every Monday at 7:00 AM
     start_date=datetime(2024, 3, 1),
     # end_date=datetime(2024, 2, 13),
@@ -86,7 +86,6 @@ with local_workflow:
         bash_command=f"find {AIRFLOW_HOME} -type f -name '*.gz' -exec gunzip -f {{}} +",
     )
 
-    # TODO: Add another task to cast the columns to the correct types and remove any NULL values (which caused the issues with the previous ingestion process for 2020-01)
 
     format_to_parquet_task = PythonOperator(
         task_id="format_to_parquet_task",
