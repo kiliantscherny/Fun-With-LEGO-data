@@ -18,7 +18,7 @@ local_workflow = DAG(
     "BRICK_INSIGHTS_LEGO_RATINGS",
     schedule_interval="0 8 * * 1",  # Run the DAG every Monday at 8:00 AM
     start_date=datetime(2024, 3, 1),
-    end_date=datetime(2024, 3, 11),
+    end_date=datetime(2024, 3, 12),
     max_active_runs=1,  # Limits concurrent runs to 3
     default_args={"retries": 3},  # Set the number of retries to 3
     tags=["Lego Data"],
@@ -37,7 +37,7 @@ with local_workflow:
     get_sets_by_year_task = PythonOperator(
         task_id="get_sets_by_year_task",
         python_callable=query_bigquery_table,
-        op_kwargs={"years": np.arange(1949, 2025).tolist()},  # Provide a list of years
+        op_kwargs={"years": np.arange(2000, 2025).tolist()},  # Provide a list of years
         dag=local_workflow,
     )
 
@@ -53,7 +53,7 @@ with local_workflow:
         python_callable=upload_to_gcs_callable,
         op_kwargs={
             "bucket": BUCKET,
-            "src_files_path": [os.path.join(AIRFLOW_HOME, "lego_ratings_1949_2024.parquet")],
+            "src_files_path": [os.path.join(AIRFLOW_HOME, "brick_insights_set_data.parquet")],
         },
         dag=local_workflow,
     )
@@ -64,11 +64,11 @@ with local_workflow:
             "tableReference": {
                 "projectId": PROJECT_ID,
                 "datasetId": "lego_raw",
-                "tableId": "lego_ratings_1949_2024",
+                "tableId": "brick_insights_set_data",
             },
             "externalDataConfiguration": {
                 "sourceFormat": "PARQUET",
-                "sourceUris": [f"gs://{BUCKET}/raw/lego_ratings_1949_2024.parquet"],
+                "sourceUris": [f"gs://{BUCKET}/raw/brick_insights_set_data.parquet"],
             },
         },
         dag=local_workflow,
