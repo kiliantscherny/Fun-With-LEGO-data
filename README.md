@@ -56,48 +56,86 @@ There are 12 different tables in the Rebrickable database:
 These are available for direct download as compressed CSV files (`.csv.gz`).
 
 ### Brick Insights
-Brick Insights offers a Data Export via an API. The data is available in JSON format and can be accessed via a request to `https://brickinsights.com/api/sets/{set_id}`. The returned data includes interesting information like price, rating, number of reviews and more.
+Brick Insights offers a Data Export via an API. The data is available in JSON format and can be accessed via a request to `https://brickinsights.com/api/sets/{set_id}`. The returned data includes interesting information like rating, review website, number of reviews and more.
 
 ```json
 {
-   "id":19199,
-   "set_id":"75575-1",
-   "name":"Ilu Discovery",
-   "year":"2023",
-   "image":"sets/75575-1.jpg",
-   "average_rating":"None",
-   "review_count":"1",
-   "url":"https://brickinsights.com/sets/75575-1",
-   "image_urls":{
-      "small":"/crop/small/sets/75575-1.jpg",
-      "medium":"/crop/medium/sets/75575-1.jpg",
-      "large":"/crop/large/sets/75575-1.jpg",
-      "teaser":"/crop/teaser/sets/75575-1.jpg",
-      "teaser_compact":"/crop/teaser_compact/sets/75575-1.jpg",
-      "generic140xn":"/crop/generic140xn/sets/75575-1.jpg",
-      "generic200xn":"/crop/generic200xn/sets/75575-1.jpg",
-      "genericnx400":"/crop/genericnx400/sets/75575-1.jpg",
-      "original":"/crop/original/sets/75575-1.jpg"
-   },
-   "reviews":[
-      {
-         "review_url":"https://brickset.com/reviews/set-75575-1",
-         "snippet":"None",
-         "review_amount":"1",
-         "rating_original":"3.9",
-         "rating_converted":"78.00",
-         "author_name":"None",
-         "embed":"None"
-      }
-   ]
+  "id": 10430,
+  "set_id": "7078-1",
+  "name": "King's Battle Chariot",
+  "year": "2009",
+  "image": "sets/7078-1.jpg",
+  "average_rating": "71",
+  "review_count": "5",
+  "url": "https://brickinsights.com/sets/7078-1",
+  "image_urls": {
+    "small": "/crop/small/sets/7078-1.jpg",
+    "medium": "/crop/medium/sets/7078-1.jpg",
+    "large": "/crop/large/sets/7078-1.jpg",
+    "teaser": "/crop/teaser/sets/7078-1.jpg",
+    "teaser_compact": "/crop/teaser_compact/sets/7078-1.jpg",
+    "generic140xn": "/crop/generic140xn/sets/7078-1.jpg",
+    "generic200xn": "/crop/generic200xn/sets/7078-1.jpg",
+    "genericnx400": "/crop/genericnx400/sets/7078-1.jpg",
+    "original": "/crop/original/sets/7078-1.jpg"
+  },
+  "reviews": [
+    {
+      "review_url": "https://www.eurobricks.com/forum/index.php?/forums/topic/29660-review-7078-kings-battle-chariot/&do=findComment&comment=511525",
+      "snippet": "The best thing about this set, hands-down, is the minifigures. They are beautiful. The accessories for them are also really great, a big plus for this set. The color scheme and parts selection is quite good, but it is at least 50 pieces under what is today the standard of price-per-piece. There are also a bunch of flaws in the design, as I demonstrated above.",
+      "review_amount": "None",
+      "rating_original": "8.8",
+      "rating_converted": "88.00",
+      "author_name": "Clone OPatra",
+      "embed": "None"
+    },
+    {
+      "review_url": "https://brickset.com/reviews/set-7078-1",
+      "snippet": "None",
+      "review_amount": "13",
+      "rating_original": "3.9",
+      "rating_converted": "78.00",
+      "author_name": "None",
+      "embed": "None"
+    },
+    {
+      "review_url": "https://www.amazon.com/LEGO-Castle-Kings-Battle-Chariot/dp/B001US06LO?SubscriptionId=AKIAIGQAU2PVYTRCS5MQ&tag=brickinsights-20&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B001US06LO",
+      "snippet": "This is a fun set if you want to get the king out of seige castle and onto the battle field!!Send the king into battle agianst the trolls! or whoever you choose whahaahha.Nice chariot rolls very well. You get a horse with battle helmet!! always cool you also get a knight and treasure chest!! and a troll minifig to run over in you chariot!!Fun set, can be used for battle or treasure transportation. Very versitile and fun!",
+      "review_amount": "16",
+      "rating_original": "3.6",
+      "rating_converted": "72.00",
+      "author_name": "None",
+      "embed": "None"
+    },
+    {
+      "review_url": "http://guide.lugnet.com/set/7078",
+      "snippet": "None",
+      "review_amount": "11",
+      "rating_original": "67",
+      "rating_converted": "67.00",
+      "author_name": "None",
+      "embed": "None"
+    },
+    {
+      "review_url": "https://www.eurobricks.com/forum/index.php?/forums/topic/29471-review-7078-king%E2%80%99s-battle-chariot/&do=findComment&comment=508063",
+      "snippet": "It's sad that this set saw the light of day, it seems like something we'd have seen in KKII rather than the much better designed castle range that we have at the moment.",
+      "review_amount": "None",
+      "rating_original": "26",
+      "rating_converted": "52.00",
+      "author_name": "Cardinal Brick",
+      "embed": "None"
+    }
+  ]
 }
 ```
+
+A set can have multiple reviews from different websites, each with a rating and a review snippet. This enables us to later analyze the average rating, the range within the ratings of a given set, the average number of reviews, among many other things.
 
 ### LEGO's website
 LEGO's [website](https://www.lego.com/en-us) offers a lot of information about their products. This includes general product information, set rating, the price and more. This information can be scraped from the website using a library like BeautifulSoup.
 
 > [!WARNING]  
-> Scraping the LEGO website is at your own risk. Your IP address might also be blocked if you scrape too much data in too short a time.
+> Scraping the LEGO website is at your own risk and discretion. Your IP address might also be blocked if you scrape too much data in too short a time. Please be careful and considerate when scraping websites.
 
 ## Project
 
@@ -127,8 +165,8 @@ And much, much more.
 
 1. **Extract (`E`): Airflow & Python scripts**
    - Download the complete Rebrickable database
-   - Use the Brick Insights API to get additional information
-   - Scrape LEGO's website for more information
+   - Use the Brick Insights API to get reviews and ratings information about each set
+   - [Optional] scrape LEGO's website for more information
 2. **Load (`L`): GCP Cloud Storage and BigQuery**
    - Store the extracted data in a data lake
    - Load the data into a data warehouse
@@ -136,7 +174,7 @@ And much, much more.
    - Create a data pipeline for processing the different data sources
    - Clean, test, and document the data to increase its usefulness for analytics
 4. **Visualize (`V`): Looker Studio**
-   - Connect it to the BigQuery project
+   - Connect Looker Studio to the BigQuery project
    - Build a dashboard to visualize the data
 
 
@@ -171,7 +209,7 @@ And much, much more.
    - Update the following variables in the `docker-compose.yaml` file:
        - `GCP_PROJECT_ID` – your GCP project ID (the same as in the Terraform step)
        - `GCP_GCS_BUCKET` – the name of the bucket you created in Cloud Storage (also the same as in the Terraform step)
-   - Run `docker-compose up -d` to start the Airflow webserver and scheduler
+   - Run `docker-compose build .` to build the image from the `Dockerfile`, then run `docker-compose up airflow-init`, followed by `docker-compose up -d` to start Airflow
    - Open `localhost:8080` in your browser and run the DAGs you want to extract and load the data
    - [optionally] feel free to update the start and end dates (as well as the crontab) of each DAG to suit your needs if you wish to extract and load the data at different times
 4. **dbt Cloud: to transform your raw data into something useful**
