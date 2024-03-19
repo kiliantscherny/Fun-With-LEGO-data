@@ -6,6 +6,9 @@ name: 'my_new_project'
 version: '1.0.0'
 config-version: 2
 
+dbt-cloud:
+    project-id: 353396
+
 # This setting configures which "profile" dbt uses for this project.
 profile: 'default'
 
