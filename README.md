@@ -212,6 +212,11 @@ And much, much more.
    - Run `docker-compose build .` to build the image from the `Dockerfile`, then run `docker-compose up airflow-init`, followed by `docker-compose up -d` to start Airflow
    - Open `localhost:8080` in your browser and run the DAGs you want to extract and load the data
    - [optionally] feel free to update the start and end dates (as well as the crontab) of each DAG to suit your needs if you wish to extract and load the data at different times
+   - Choose which DAG(s) to run:
+     - If you want to ingest the Rebrickable database, run the `REBRICKABLE_DATA_INGESTION` DAG (tip: you will need to run this first, before you can run any of the other DAGs, as they are reliant on the `sets` table that is created from it)
+     - If you want to get the Brick Insights data, run the `BRICK_INSIGHTS_LEGO_SET_RATINGS` DAG
+     - If you want to scrape the LEGO website, run the `LEGO_WEBSITE_SET_PRICES_RATINGS` DAG
+   - Depending on several variables (the number years for which you want set information, your internet connection, etc.), the DAGs can take a while to run (from a few minutes to several hours)
 4. **dbt Cloud: to transform your raw data into something useful**
    - As mentioned above, you will need a dbt Cloud account to do this, but it's perfectly possible to do this with dbt Core (not covered in these instructions, but there are plenty of resources online to help you with this)
    - Connect your BigQuery project to dbt Cloud by following [the guide](https://docs.getdbt.com/guides/bigquery?step=1)
