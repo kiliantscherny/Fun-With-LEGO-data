@@ -70,6 +70,8 @@ with local_workflow:
             },
             "externalDataConfiguration": {
                 "sourceFormat": "PARQUET",
+                "autodetect": True,
+                "skipLeadingRows": 1,  # In case the file has a header
                 "sourceUris": [
                     f"gs://{BUCKET}/raw/brick_insights_reviews_data.parquet"
                 ],
