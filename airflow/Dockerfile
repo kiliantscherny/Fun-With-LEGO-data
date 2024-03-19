@@ -1,11 +1,11 @@
 # First-time build can take upto 10 mins.
 
-FROM apache/airflow:latest
+FROM apache/airflow:2.8.3
 
 ENV AIRFLOW_HOME=/opt/airflow
 
 USER root
-RUN apt-get update -qq && apt-get install vim -qqq
+RUN apt-get update -qq && apt-get install vim -qqq && apt-get install -y gosu -qqq
 # git gcc g++ -qqq
 
 COPY requirements.txt .
