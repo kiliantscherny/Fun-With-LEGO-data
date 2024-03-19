@@ -45,6 +45,7 @@ def fetch_rating(set_id, timeout=10):  # Set the timeout to 10 seconds by defaul
                         "rating_original": rating_original,
                         "rating_converted": rating_converted,
                         "author_name": author_name,
+                        "fetched_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
                     }
                 )
             return review_info
