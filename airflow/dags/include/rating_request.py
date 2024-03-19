@@ -80,7 +80,7 @@ def main(lego_sets):
     print("\nScraping results:")
     print(df)
 
-    parquet_file_path = os.path.join(".", "brick_insights_reviews_data.csv")
+    parquet_file_path = os.path.join(".", "brick_insights_reviews_data.parquet")
     df.to_csv(parquet_file_path, index=False)
     print(f"DataFrame saved to {parquet_file_path}")
 

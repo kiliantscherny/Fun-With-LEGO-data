@@ -37,7 +37,7 @@ with local_workflow:
     get_sets_by_year_task = PythonOperator(
         task_id="get_sets_by_year_task",
         python_callable=query_bigquery_table,
-        op_kwargs={"years": np.arange(2000, 2025).tolist()},  # Provide a list of years
+        op_kwargs={"years": np.arange(1949, 2024).tolist()},  # Provide a list of years you want to get sets for
         dag=local_workflow,
     )
 
