@@ -11,14 +11,14 @@ from include.retrieve_sets_by_year import query_bigquery_table
 from include.upload_to_gcs import upload_to_gcs_callable
 
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
-BUCKET = os.environ.get("GCP_GCS_BUCKET")   
+BUCKET = os.environ.get("GCP_GCS_BUCKET")
 AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow/")
 
 local_workflow = DAG(
-    "BRICK_INSIGHTS_LEGO_RATINGS",
+    "BRICK_INSIGHTS_LEGO_SET_RATINGS",
     schedule_interval="0 8 * * 1",  # Run the DAG every Monday at 8:00 AM
     start_date=datetime(2024, 3, 1),
-    end_date=datetime(2024, 3, 12),
+    end_date=datetime(2024, 3, 21),
     max_active_runs=1,  # Limits concurrent runs to 3
     default_args={"retries": 3},  # Set the number of retries to 3
     tags=["Lego Data"],
@@ -53,7 +53,9 @@ with local_workflow:
         python_callable=upload_to_gcs_callable,
         op_kwargs={
             "bucket": BUCKET,
-            "src_files_path": [os.path.join(AIRFLOW_HOME, "brick_insights_set_data.parquet")],
+            "src_files_path": [
+                os.path.join(AIRFLOW_HOME, "brick_insights_reviews_data.parquet")
+            ],
         },
         dag=local_workflow,
     )
@@ -64,11 +66,13 @@ with local_workflow:
             "tableReference": {
                 "projectId": PROJECT_ID,
                 "datasetId": "lego_raw",
-                "tableId": "brick_insights_set_data",
+                "tableId": "brick_insights_reviews_data",
             },
             "externalDataConfiguration": {
                 "sourceFormat": "PARQUET",
-                "sourceUris": [f"gs://{BUCKET}/raw/brick_insights_set_data.parquet"],
+                "sourceUris": [
+                    f"gs://{BUCKET}/raw/brick_insights_reviews_data.parquet"
+                ],
             },
         },
         dag=local_workflow,
