@@ -1,14 +1,14 @@
-with 
+WITH
 
-source as (
+source AS (
 
-    select * from {{ source('lego_raw', 'brick_insights_reviews_data_pre_2000') }}
+    SELECT * FROM {{ source('lego_raw', 'brick_insights_reviews_data_pre_2000') }}
 
 ),
 
-renamed as (
+renamed AS (
 
-    select
+    SELECT
         set_num,
         review_url,
         snippet,
@@ -17,8 +17,8 @@ renamed as (
         rating_converted,
         author_name
 
-    from source
+    FROM source
 
 )
 
-select * from renamed
+SELECT * FROM renamed
