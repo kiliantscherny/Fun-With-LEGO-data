@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: stg_lego_raw__brick_insights_reviews_data
+    description: >
+      This model contains review and rating data about LEGO sets from
+      Brick Insights, which aggregates these from across the web.
+      This model has data for sets for all years available (1949-2024).
+
+    columns:
+      - name: set_num
+        description: The set number
+        tests:
+          - not_null:
+              severity: error
+
+      - name: review_url
+        description: The URL to the website the review is from
+
+      - name: snippet
+        description: A snippet of text from the review
+
+      - name: review_amount
+        description: The number of reviews from this website
+
+      - name: rating_original
+        description: >
+          The rating of the set on the website in its original format.
+          This might be on a scale of 1-5 or 1-100, or something else.
+
+      - name: rating_converted
+        description: >
+          The rating of the set converted to a 100 point scale.
