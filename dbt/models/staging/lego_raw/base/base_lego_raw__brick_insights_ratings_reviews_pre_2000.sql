@@ -2,7 +2,7 @@ WITH
 
 source AS (
 
-    SELECT * FROM {{ source('lego_raw', 'brick_insights_reviews_data_pre_2000') }}
+    SELECT * FROM {{ source('lego_raw', 'brick_insights_ratings_reviews_pre_2000') }}
 
 ),
 
@@ -15,7 +15,8 @@ renamed AS (
         review_amount,
         rating_original,
         rating_converted,
-        author_name
+        author_name,
+        fetched_at
 
     FROM source
 

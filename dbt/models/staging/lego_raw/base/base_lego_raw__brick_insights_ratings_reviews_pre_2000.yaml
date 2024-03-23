@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: base_lego_raw__brick_insights_reviews_data_pre_2000
+  - name: base_lego_raw__brick_insights_ratings_reviews_pre_2000
     description: >
       This model contains review and rating data about LEGO sets from
       Brick Insights, which aggregates these from across the web.
@@ -34,3 +34,6 @@ models:
 
       - name: author_name
         description: The name of the review's author
+
+      - name: fetched_at
+        description: Timestamp of when the data was fetched from the API

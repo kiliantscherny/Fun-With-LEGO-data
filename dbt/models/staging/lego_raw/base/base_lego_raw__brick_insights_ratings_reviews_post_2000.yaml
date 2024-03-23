@@ -1,11 +1,11 @@
 version: 2
 
 models:
-  - name: stg_lego_raw__brick_insights_reviews_data
+  - name: base_lego_raw__brick_insights_ratings_reviews_post_2000
     description: >
       This model contains review and rating data about LEGO sets from
       Brick Insights, which aggregates these from across the web.
-      This model has data for sets for all years available (1949-2024).
+      This model has data for sets from the year 2000 until 2024.
 
     columns:
       - name: set_num
@@ -34,4 +34,6 @@ models:
 
       - name: author_name
         description: The name of the review's author
-        
+
+      - name: fetched_at
+        description: Timestamp of when the data was fetched from the API
