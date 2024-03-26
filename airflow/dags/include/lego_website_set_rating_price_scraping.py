@@ -1,10 +1,9 @@
 import aiohttp
 import asyncio
-from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
 import random
-from tenacity import retry, stop_after_attempt, wait_fixed
+from tenacity import retry, stop_after_attempt, wait_exponential, wait_fixed
 
 # List of user agents to rotate
 USER_AGENTS = [
@@ -29,10 +28,10 @@ USER_AGENTS = [
 ]
 
 # Semaphore to limit concurrent requests
-semaphore = asyncio.Semaphore(3)  # Adjust the number as needed
+semaphore = asyncio.Semaphore(2)  # Adjust the number as needed
 
 
-@retry(stop=stop_after_attempt(3), wait=wait_fixed(30))
+@retry(wait=wait_exponential(multiplier=1, min=5, max=15))
 async def fetch_rating(session, lego_set):
     # Extracting the set number by splitting at the hyphen
     set_num = lego_set.split("-")[0]
@@ -48,26 +47,18 @@ async def fetch_rating(session, lego_set):
                 if response.status == 200:
                     print(f"Successfully retrieved the page for set {set_num}.")
                     html = await response.text()
-                    soup = BeautifulSoup(html, "html.parser")
                     # Parsing rating...
-                    script_tag = soup.find(
-                        "script", string=lambda x: "rating" in str(x)
-                    )
-                    rating = None
-                    if script_tag:
-                        json_data = str(script_tag)
-                        start_index = json_data.find('"rating":') + len('"rating":')
-                        end_index = json_data.find(",", start_index)
-                        rating = json_data[start_index:end_index]
-                        print(f"Rating for set {set_num}: {rating}")
+                    script_tag_start = html.find('rating') + 8
+                    script_tag_end = html.find('}]', script_tag_start) + 2
+                    rating = html[script_tag_start:script_tag_end]
 
                     # Parsing price and currency...
-                    price_tag = soup.find("meta", {"property": "product:price:amount"})
-                    currency_tag = soup.find(
-                        "meta", {"property": "product:price:currency"}
-                    )
-                    price = price_tag["content"] if price_tag else None
-                    currency = currency_tag["content"] if currency_tag else None
+                    price_start_index = html.find('<meta property="product:price:amount" content="') + len('<meta property="product:price:amount" content="')
+                    price_end_index = html.find('"', price_start_index)
+                    price = html[price_start_index:price_end_index].strip() if price_start_index != -1 else None
+                    currency_start_index = html.find('<meta property="product:price:currency" content="') + len('<meta property="product:price:currency" content="')
+                    currency_end_index = html.find('"', currency_start_index)
+                    currency = html[currency_start_index:currency_end_index].strip() if currency_start_index != -1 else None
                     print(f"Price for set {set_num}: {price} {currency}")
 
                     return {
