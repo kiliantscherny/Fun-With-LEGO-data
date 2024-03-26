@@ -1,9 +1,11 @@
 import aiohttp
 import asyncio
+from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
 import random
-from tenacity import retry, stop_after_attempt, wait_exponential, wait_fixed
+from tenacity import retry, wait_exponential
+
 
 # List of user agents to rotate
 USER_AGENTS = [
@@ -32,33 +34,42 @@ semaphore = asyncio.Semaphore(2)  # Adjust the number as needed
 
 
 @retry(wait=wait_exponential(multiplier=1, min=5, max=15))
-async def fetch_rating(session, lego_set):
+async def fetch_rating(session, lego_set, counter):
     # Extracting the set number by splitting at the hyphen
     set_num = lego_set.split("-")[0]
 
     url = f"https://www.lego.com/en-us/product/{set_num}"
-    print(f"Fetching rating and price for set {set_num}...")
+    # print(f"Fetching rating and price for set {set_num}...")
     try:
         headers = {"User-Agent": random.choice(USER_AGENTS)}
-        async with semaphore:  # Acquire the semaphore
+        async with semaphore:
             async with session.get(
                 url, headers=headers, timeout=30
             ) as response:  # Set a timeout
+                print(f"Processing {counter} of {len(lego_sets)}")
                 if response.status == 200:
                     print(f"Successfully retrieved the page for set {set_num}.")
                     html = await response.text()
+                    soup = BeautifulSoup(html, "html.parser")
                     # Parsing rating...
-                    script_tag_start = html.find('rating') + 8
-                    script_tag_end = html.find('}]', script_tag_start) + 2
-                    rating = html[script_tag_start:script_tag_end]
+                    script_tag = soup.find(
+                        "script", string=lambda x: "rating" in str(x)
+                    )
+                    rating = None
+                    if script_tag:
+                        json_data = str(script_tag)
+                        start_index = json_data.find('"rating":') + len('"rating":')
+                        end_index = json_data.find(",", start_index)
+                        rating = json_data[start_index:end_index]
+                        print(f"Rating for set {set_num}: {rating}")
 
                     # Parsing price and currency...
-                    price_start_index = html.find('<meta property="product:price:amount" content="') + len('<meta property="product:price:amount" content="')
-                    price_end_index = html.find('"', price_start_index)
-                    price = html[price_start_index:price_end_index].strip() if price_start_index != -1 else None
-                    currency_start_index = html.find('<meta property="product:price:currency" content="') + len('<meta property="product:price:currency" content="')
-                    currency_end_index = html.find('"', currency_start_index)
-                    currency = html[currency_start_index:currency_end_index].strip() if currency_start_index != -1 else None
+                    price_tag = soup.find("meta", {"property": "product:price:amount"})
+                    currency_tag = soup.find(
+                        "meta", {"property": "product:price:currency"}
+                    )
+                    price = price_tag["content"] if price_tag else None
+                    currency = currency_tag["content"] if currency_tag else None
                     print(f"Price for set {set_num}: {price} {currency}")
 
                     return {
@@ -120,10 +131,15 @@ async def fetch_rating(session, lego_set):
 
 async def get_price_and_rating_callable(lego_sets):
     async with aiohttp.ClientSession() as session:
-        tasks = [fetch_rating(session, lego_set) for lego_set in lego_sets]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        counter = 0
+        tasks = []
+        for lego_set in lego_sets:
+            counter += 1
+            tasks.append(fetch_rating(session, lego_set, counter))
+        results = await asyncio.gather(
+            *tasks, return_exceptions=True
+        )  # Return exceptions to handle errors
 
-        # Filter out exceptions from the results
         valid_results = [r for r in results if not isinstance(r, Exception)]
 
         if valid_results:
@@ -133,24 +149,36 @@ async def get_price_and_rating_callable(lego_sets):
             print(df)
 
             # Write the dataframe to a Parquet file
-            parquet_file_path = "lego_website_set_data.parquet"
+            parquet_file_path = "lego_website_set_prices_and_ratings.parquet"
             df.to_parquet(parquet_file_path, index=False)
             print(f"DataFrame saved to {parquet_file_path}")
         else:
-            print("No valid ratings were fetched due to timeouts or errors.")
+            print("No ratings were fetched due to timeouts or errors.")
 
 
 if __name__ == "__main__":
     lego_sets = [
-        "31155-1",
-        "9780241657621-1",
-        "40708-1",
-        "12345",
-        "67890",
-        "45678",
-        "2435678",
-        "34567879786",
-        "8793864-1",
+        "31199-1",
+        "31200-1",
+        "335550-1",
+        "4000503-1",
+        "4000505-1",
+        "4002020-1",
+        "40310800-1",
+        "40310801-1",
+        "40310810-1",
+        "40320800-1",
+        "40320801-1",
+        "40320810-1",
+        "40321739-1",
+        "40330800-1",
+        "40330801-1",
+        "40330810-1",
+        "40355-1",
+        "40357-1",
+        "40370-1",
+        "40371-1",
+        "40372-1",
     ]  # Define your LEGO sets here
     print("Starting web scraping...")
     asyncio.run(get_price_and_rating_callable(lego_sets))
