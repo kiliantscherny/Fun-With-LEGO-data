@@ -78,11 +78,11 @@ def main(lego_sets):
 
     # Create dataframe from results
     df = pd.DataFrame(results)
-    print("\nScraping results:")
+    print("\nAPI request results:")
     print(df)
 
-    parquet_file_path = os.path.join(".", "brick_insights_reviews_data.parquet")
-    df.to_csv(parquet_file_path, index=False)
+    parquet_file_path = os.path.join(AIRFLOW_HOME, "brick_insights_ratings_reviews.parquet")
+    df.to_parquet(parquet_file_path, index=False)
     print(f"DataFrame saved to {parquet_file_path}")
 
 
@@ -95,5 +95,5 @@ if __name__ == "__main__":
         "77047",
         "77046",
     ]  # Define your LEGO sets here
-    print("\033[95m" + "Starting web scraping..." + "\033[0m")
+    print("\033[95m" + "Starting to fetch set data..." + "\033[0m")
     main(lego_sets)

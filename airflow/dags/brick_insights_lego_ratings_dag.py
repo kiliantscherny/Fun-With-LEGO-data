@@ -6,7 +6,7 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import (
     BigQueryCreateExternalTableOperator,
 )
-from include.rating_request import main
+from airflow.dags.include.brick_insights_rating_request import main
 from include.retrieve_sets_by_year import query_bigquery_table
 from include.upload_to_gcs import upload_to_gcs_callable
 
