@@ -18,7 +18,8 @@ local_workflow = DAG(
     "BRICK_INSIGHTS_LEGO_SET_RATINGS",
     schedule_interval="0 8 * * 1",  # Run the DAG every Monday at 8:00 AM
     start_date=datetime(2024, 3, 1),
-    end_date=datetime(2024, 3, 21),
+    end_date=datetime(2024, 3, 27),
+    catchup=False,
     max_active_runs=1,  # Limits concurrent runs to 3
     default_args={"retries": 3},  # Set the number of retries to 3
     tags=["Lego Data"],
