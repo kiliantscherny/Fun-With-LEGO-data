@@ -37,7 +37,7 @@ with local_workflow:
     get_sets_by_year_task = PythonOperator(
         task_id="get_sets_by_year_task",
         python_callable=query_bigquery_table,
-        op_kwargs={"years": np.arange(1949, 2024).tolist()},  # Provide a list of years you want to get sets for
+        op_kwargs={"years": np.arange(1949, 2025).tolist()},  # Provide a list of years you want to get sets for
         dag=local_workflow,
     )
 
@@ -54,7 +54,7 @@ with local_workflow:
         op_kwargs={
             "bucket": BUCKET,
             "src_files_path": [
-                os.path.join(AIRFLOW_HOME, "brick_insights_reviews_data.parquet")
+                os.path.join(AIRFLOW_HOME, "brick_insights_ratings_and_reviews.parquet")
             ],
         },
         dag=local_workflow,
@@ -66,14 +66,14 @@ with local_workflow:
             "tableReference": {
                 "projectId": PROJECT_ID,
                 "datasetId": "lego_raw",
-                "tableId": "brick_insights_reviews_data",
+                "tableId": "brick_insights_ratings_and_reviews",
             },
             "externalDataConfiguration": {
                 "sourceFormat": "PARQUET",
                 "autodetect": True,
                 "skipLeadingRows": 1,  # In case the file has a header
                 "sourceUris": [
-                    f"gs://{BUCKET}/raw/brick_insights_reviews_data.parquet"
+                    f"gs://{BUCKET}/raw/brick_insights_ratings_and_reviews.parquet"
                 ],
             },
         },
