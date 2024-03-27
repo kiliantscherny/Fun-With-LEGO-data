@@ -131,11 +131,27 @@ Brick Insights offers a Data Export via an API. The data is available in JSON fo
 
 A set can have multiple reviews from different websites, each with a rating and a review snippet. This enables us to later analyze the average rating, the range within the ratings of a given set, the average number of reviews, among many other things.
 
+### LEGO data from Gdańsk University of Technology[^1] (henceforth "Aggregated Data")
+
+From [the documentation](https://mostwiedzy.pl/en/open-research-data/data-on-lego-sets-release-dates-and-retail-prices-combined-with-aftermarket-transaction-prices-betwe,10210741381038465-0):
+> The dataset contains LEGO bricks sets item count and pricing history for AI-based set pricing prediction.
+>
+> The data was downloaded from three sources. LEGO sets retail prices, release dates, and IDs were downloaded from Brickset.com, where one can find the ID number of each set that was released by Lego and its retail prices. The current status of the sets was downloaded from Lego.com and the retail prices for Poland and prices from aftermarket transactions were downloaded from promoklocki.pl. The data was merged based on the official LEGO set ID.
+
+I'm using this dataset primarily for the set price data, which offers some unique insights opportunities. Thank you to the authors for making this data available to the public.
+
+
+[^1]: Oczkoś, W., Podgórski, B., Szczepańska, W., & Boiński, T. M. (2024). Data on LEGO sets release dates and worldwide retail prices combined with aftermarket transaction prices in Poland between June 2018 and June 2023. Data in Brief, 52, 110056. https://doi.org/10.1016/j.dib.2024.110056
+
+
+
 ### LEGO's website
 LEGO's [website](https://www.lego.com/en-us) offers a lot of information about their products. This includes general product information, set rating, the price and more. This information can be scraped from the website using a library like BeautifulSoup.
 
 > [!WARNING]  
 > Scraping the LEGO website is at your own risk and discretion. Your IP address might also be blocked if you scrape too much data in too short a time. Please be careful and considerate when scraping websites.
+
+Scraping the LEGO website is a time-consuming process and can be difficult to do for a large number of pages. For this project, I'm focusing on the Rebrickable, Brick Insights and the Aggregated data, but you can explore this data source further if you wish. I have created a script to do this, but its use is not necessary for this project.
 
 ## Project
 
