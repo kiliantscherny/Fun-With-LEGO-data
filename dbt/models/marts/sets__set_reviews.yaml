@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: sets__set_reviews
+    description: >
+      This model joins together key information about sets, reviews,
+      ratings and themes.
+
+    columns:
+      - name: set_num
+        description: The set number
+        tests:
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+
+      - name: set_name
+        description: The set's name
+
+      - name: release_year
+        description: Year the set was released
+
+      - name: theme_id
+        description: The set's theme ID
+
+      - name: theme_name
+        description: The theme's name
+
+      - name: parent_id
+        description: Unique ID for the larger theme, if there is one
+
+      - name: parent_theme_name
+        description: The parent theme's name
+
+      - name: num_parts
+        description: The number of parts in the set
+
+      - name: review_count
+        description: The number of reviews for the set
+
+      - name: avg_rating
+        description: The set's average rating
+
+      - name: min_rating
+        description: The set's minimum rating
+
+      - name: max_rating
+        description: The set's maximum rating
+
+      - name: median_rating
+        description: The set's median rating
