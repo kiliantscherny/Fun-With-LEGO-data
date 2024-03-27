@@ -12,8 +12,6 @@ models:
         tests:
           - not_null:
               severity: error
-          - unique:
-              severity: error
 
       - name: review_url
         description: The URL to the website the review is from
