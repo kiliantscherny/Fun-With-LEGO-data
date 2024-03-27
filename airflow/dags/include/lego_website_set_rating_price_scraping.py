@@ -45,9 +45,9 @@ async def fetch_rating(session, lego_set, counter):
     try:
         headers = {"User-Agent": random.choice(USER_AGENTS)}
         async with semaphore:
-            await asyncio.sleep(3)  # Sleep for 3 seconds
+            await asyncio.sleep(2)  # Sleep for 3 seconds
             async with session.get(
-                url, headers=headers, timeout=20
+                url, headers=headers, timeout=10
             ) as response:  # Set a timeout
                 print(f"Processing {counter} of {len(lego_sets)}")
                 if response.status == 200:
@@ -190,7 +190,7 @@ async def get_price_and_rating_callable(lego_sets, append_to_existing=False):
                 break  # No sets to retry
 
             print(f"Retrying failed sets after delay...")
-            await asyncio.sleep(60)  # Wait for 1 minute before retrying
+            await asyncio.sleep(20)  # Wait for 1 minute before retrying
             lego_sets = retry_sets  # Retry only the failed sets
 
     print("All sets processed.")
@@ -198,11 +198,7 @@ async def get_price_and_rating_callable(lego_sets, append_to_existing=False):
 
 if __name__ == "__main__":
     lego_sets = [
-        "10327",
-        "31154",
-        "10330",
-        "31200",
-        "GOBBLEDEEGOOK",
+        '792009-1', '80006-1', '80007-1', '912404-1', '92176-1', '9789030508595-1', '9789030509097-1'
     ]  # Define your LEGO sets here
     print("Starting web scraping...")
     asyncio.run(get_price_and_rating_callable(lego_sets, append_to_existing=True))
