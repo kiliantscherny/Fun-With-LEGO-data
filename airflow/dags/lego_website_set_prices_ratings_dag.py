@@ -3,6 +3,7 @@ from datetime import datetime
 import numpy as np
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow.providers.google.cloud.operators.bigquery import (
     BigQueryCreateExternalTableOperator,
 )
@@ -43,7 +44,7 @@ with local_workflow:
     get_sets_by_year_task = PythonOperator(
         task_id="get_sets_by_year_task",
         python_callable=query_bigquery_table,
-        op_kwargs={"years": np.arange(2020, 2025).tolist()},  # Provide a list of years
+        op_kwargs={"years": np.arange(2023, 2024).tolist()},  # Provide a list of years
         dag=local_workflow,
     )
 
@@ -60,7 +61,9 @@ with local_workflow:
         op_kwargs={
             "bucket": BUCKET,
             "src_files_path": [
-                os.path.join(AIRFLOW_HOME, "lego_website_set_prices_and_ratings.parquet")
+                os.path.join(
+                    AIRFLOW_HOME, "lego_website_set_prices_and_ratings.parquet"
+                )
             ],
         },
         dag=local_workflow,
@@ -76,10 +79,17 @@ with local_workflow:
             },
             "externalDataConfiguration": {
                 "sourceFormat": "PARQUET",
-                "sourceUris": [f"gs://{BUCKET}/raw/lego_website_set_prices_and_ratings.parquet"],
+                "sourceUris": [
+                    f"gs://{BUCKET}/raw/lego_website_set_prices_and_ratings.parquet"
+                ],
             },
         },
         dag=local_workflow,
+    )
+
+    cleanup_task = BashOperator(
+        task_id="cleanup_task",
+        bash_command=f"rm -f {AIRFLOW_HOME}/lego_website_set_prices_and_ratings.parquet",
     )
 
     # Define the task dependencies
@@ -88,4 +98,5 @@ with local_workflow:
         >> scrape_lego_ratings
         >> local_to_gcs_task
         >> external_table_task
+        >> cleanup_task
     )
