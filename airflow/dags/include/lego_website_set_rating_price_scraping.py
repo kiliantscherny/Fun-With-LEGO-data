@@ -7,6 +7,8 @@ from datetime import datetime
 import random
 from tenacity import retry, wait_exponential
 
+# Default value for AIRFLOW_HOME if not set
+AIRFLOW_HOME = os.getenv("AIRFLOW_HOME", ".")
 
 # List of user agents to rotate
 USER_AGENTS = [
@@ -40,7 +42,6 @@ async def fetch_rating(session, lego_set, counter):
     set_num = lego_set.split("-")[0]
 
     url = f"https://www.lego.com/en-us/product/{set_num}"
-    # print(f"Fetching rating and price for set {set_num}...")
     try:
         headers = {"User-Agent": random.choice(USER_AGENTS)}
         async with semaphore:
@@ -166,7 +167,9 @@ async def get_price_and_rating_callable(lego_sets, append_to_existing=False):
                 # Create dataframe from valid results
                 df = pd.DataFrame(valid_results)
                 if append_to_existing:
-                    existing_file = "lego_website_set_prices_and_ratings.parquet"
+                    existing_file = os.path.join(
+                        AIRFLOW_HOME, "lego_website_set_prices_and_ratings.parquet"
+                    )
                     if os.path.exists(existing_file):
                         existing_df = pd.read_parquet(existing_file)
                         df = pd.concat([existing_df, df], ignore_index=True)
@@ -175,7 +178,9 @@ async def get_price_and_rating_callable(lego_sets, append_to_existing=False):
                 print(df)
 
                 # Write the dataframe to a Parquet file
-                parquet_file_path = "lego_website_set_prices_and_ratings.parquet"
+                parquet_file_path = os.path.join(
+                    AIRFLOW_HOME, "lego_website_set_prices_and_ratings.parquet"
+                )
                 df.to_parquet(parquet_file_path, index=False)
                 print(f"DataFrame saved to {parquet_file_path}")
             else:
