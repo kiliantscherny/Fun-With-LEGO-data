@@ -75,10 +75,17 @@ with local_workflow:
         dag=local_workflow,
     )
 
+    cleanup_task = BashOperator(
+        task_id="cleanup_task",
+        bash_command=f"rm -f {AIRFLOW_HOME}/lego_final_data.parquet \
+            {AIRFLOW_HOME}/lego_final_data.xlsx",
+    )
+
     # Define the task dependencies
     (
         download_file_task
         >> convert_to_parquet_task
         >> local_to_gcs_task
         >> external_table_task
+        >> cleanup_task
     )

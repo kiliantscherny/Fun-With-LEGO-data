@@ -3,6 +3,7 @@ from datetime import datetime
 import numpy as np
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow.providers.google.cloud.operators.bigquery import (
     BigQueryCreateExternalTableOperator,
 )
@@ -38,7 +39,9 @@ with local_workflow:
     get_sets_by_year_task = PythonOperator(
         task_id="get_sets_by_year_task",
         python_callable=query_bigquery_table,
-        op_kwargs={"years": np.arange(1949, 2025).tolist()},  # Provide a list of years you want to get sets for
+        op_kwargs={
+            "years": np.arange(1949, 2025).tolist()
+        },  # Provide a list of years you want to get sets for
         dag=local_workflow,
     )
 
@@ -81,10 +84,16 @@ with local_workflow:
         dag=local_workflow,
     )
 
+    cleanup_task = BashOperator(
+        task_id="cleanup_task",
+        bash_command=f"rm -f {AIRFLOW_HOME}/brick_insights_ratings_and_reviews.parquet",
+    )
+
     # Define the task dependencies
     (
         get_sets_by_year_task
         >> scrape_lego_ratings_task
         >> local_to_gcs_task
         >> external_table_task
+        >> cleanup_task
     )
