@@ -1,11 +1,7 @@
 version: 2
 
 models:
-<<<<<<<< HEAD:dbt/models/staging/lego_raw/stg_lego_raw__brick_insights_ratings_reviews.yaml
   - name: stg_lego_raw__brick_insights_ratings_reviews
-========
-  - name: stg_lego_raw__brick_insights_reviews
->>>>>>>> 3173d17bd946344fb878337d3cdc9da070a75fd7:dbt/models/staging/lego_raw/stg_lego_raw__brick_insights_reviews.yaml
     description: >
       This model contains review and rating data about LEGO sets from
       Brick Insights, which aggregates these from across the web.
