@@ -12,11 +12,11 @@ renamed AS (
         set_num,
         review_url,
         snippet,
-        review_amount,
+        SAFE_CAST(review_amount AS INT64) AS review_amount,
         rating_original,
-        rating_converted,
+        SAFE_CAST(rating_converted AS FLOAT64) AS rating_converted,
         author_name,
-        fetched_at
+        SAFE_CAST(fetched_at AS TIMESTAMP) AS fetched_at
 
     FROM source
 
