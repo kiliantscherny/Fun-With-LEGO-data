@@ -1,10 +1,14 @@
+import os
 import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
 import random
-from tenacity import retry, stop_after_attempt, wait_fixed
+from tenacity import retry, wait_exponential
+
+# Default value for AIRFLOW_HOME if not set
+AIRFLOW_HOME = os.getenv("AIRFLOW_HOME", ".")
 
 # List of user agents to rotate
 USER_AGENTS = [
@@ -29,22 +33,23 @@ USER_AGENTS = [
 ]
 
 # Semaphore to limit concurrent requests
-semaphore = asyncio.Semaphore(3)  # Adjust the number as needed
+semaphore = asyncio.Semaphore(1)  # Adjust the number as needed
 
 
-@retry(stop=stop_after_attempt(3), wait=wait_fixed(30))
-async def fetch_rating(session, lego_set):
+@retry(wait=wait_exponential(multiplier=1, min=5, max=15))
+async def fetch_rating(session, lego_set, counter):
     # Extracting the set number by splitting at the hyphen
     set_num = lego_set.split("-")[0]
 
     url = f"https://www.lego.com/en-us/product/{set_num}"
-    print(f"Fetching rating and price for set {set_num}...")
     try:
         headers = {"User-Agent": random.choice(USER_AGENTS)}
-        async with semaphore:  # Acquire the semaphore
+        async with semaphore:
+            await asyncio.sleep(2)  # Sleep for 3 seconds
             async with session.get(
-                url, headers=headers, timeout=30
+                url, headers=headers, timeout=10
             ) as response:  # Set a timeout
+                print(f"Processing {counter} of {len(lego_sets)}")
                 if response.status == 200:
                     print(f"Successfully retrieved the page for set {set_num}.")
                     html = await response.text()
@@ -127,39 +132,73 @@ async def fetch_rating(session, lego_set):
         }
 
 
-async def get_price_and_rating_callable(lego_sets):
+async def get_price_and_rating_callable(lego_sets, append_to_existing=False):
     async with aiohttp.ClientSession() as session:
-        tasks = [fetch_rating(session, lego_set) for lego_set in lego_sets]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        counter = 0
+        retry_counter = {lego_set: 0 for lego_set in lego_sets}
+        while True:
+            tasks = []
+            for lego_set in lego_sets:
+                counter += 1
+                tasks.append(fetch_rating(session, lego_set, counter))
+            results = await asyncio.gather(
+                *tasks, return_exceptions=True
+            )  # Return exceptions to handle errors
 
-        # Filter out exceptions from the results
-        valid_results = [r for r in results if not isinstance(r, Exception)]
+            valid_results = []
+            retry_sets = []
+            for lego_set, result in zip(lego_sets, results):
+                if isinstance(result, Exception):
+                    retry_counter[lego_set] += 1
+                    if retry_counter[lego_set] <= 3:
+                        retry_sets.append(lego_set)
+                elif (
+                    result.get("price") is None
+                    or result.get("currency") is None
+                    or result.get("rating") is None
+                ):
+                    retry_counter[lego_set] += 1
+                    if retry_counter[lego_set] <= 3:
+                        retry_sets.append(lego_set)
+                else:
+                    valid_results.append(result)
 
-        if valid_results:
-            # Create dataframe from valid results
-            df = pd.DataFrame(valid_results)
-            print("\nScraping results:")
-            print(df)
+            if valid_results:
+                # Create dataframe from valid results
+                df = pd.DataFrame(valid_results)
+                if append_to_existing:
+                    existing_file = os.path.join(
+                        AIRFLOW_HOME, "lego_website_set_prices_and_ratings.parquet"
+                    )
+                    if os.path.exists(existing_file):
+                        existing_df = pd.read_parquet(existing_file)
+                        df = pd.concat([existing_df, df], ignore_index=True)
 
-            # Write the dataframe to a Parquet file
-            parquet_file_path = "lego_website_set_data.parquet"
-            df.to_parquet(parquet_file_path, index=False)
-            print(f"DataFrame saved to {parquet_file_path}")
-        else:
-            print("No valid ratings were fetched due to timeouts or errors.")
+                print("\nScraping results:")
+                print(df)
+
+                # Write the dataframe to a Parquet file
+                parquet_file_path = os.path.join(
+                    AIRFLOW_HOME, "lego_website_set_prices_and_ratings.parquet"
+                )
+                df.to_parquet(parquet_file_path, index=False)
+                print(f"DataFrame saved to {parquet_file_path}")
+            else:
+                print("No ratings were fetched due to timeouts or errors.")
+
+            if not retry_sets:
+                break  # No sets to retry
+
+            print(f"Retrying failed sets after delay...")
+            await asyncio.sleep(20)  # Wait for 1 minute before retrying
+            lego_sets = retry_sets  # Retry only the failed sets
+
+    print("All sets processed.")
 
 
 if __name__ == "__main__":
     lego_sets = [
-        "31155-1",
-        "9780241657621-1",
-        "40708-1",
-        "12345",
-        "67890",
-        "45678",
-        "2435678",
-        "34567879786",
-        "8793864-1",
+        '792009-1', '80006-1', '80007-1', '912404-1', '92176-1', '9789030508595-1', '9789030509097-1'
     ]  # Define your LEGO sets here
     print("Starting web scraping...")
-    asyncio.run(get_price_and_rating_callable(lego_sets))
+    asyncio.run(get_price_and_rating_callable(lego_sets, append_to_existing=True))

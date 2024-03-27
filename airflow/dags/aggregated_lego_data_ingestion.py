@@ -1,21 +1,21 @@
 import os
 from datetime import datetime
-import numpy as np
+import pandas as pd
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow.providers.google.cloud.operators.bigquery import (
     BigQueryCreateExternalTableOperator,
 )
-from include.brick_insights_rating_request import main
-from include.retrieve_sets_by_year import query_bigquery_table
 from include.upload_to_gcs import upload_to_gcs_callable
+
 
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
 BUCKET = os.environ.get("GCP_GCS_BUCKET")
 AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow/")
 
 local_workflow = DAG(
-    "BRICK_INSIGHTS_LEGO_SET_RATINGS",
+    "AGGREGATED_LEGO_DATA_INGESTION",
     schedule_interval="0 8 * * 1",  # Run the DAG every Monday at 8:00 AM
     start_date=datetime(2024, 3, 1),
     end_date=datetime(2024, 3, 27),
@@ -26,27 +26,25 @@ local_workflow = DAG(
 )
 
 
-# Define the task to scrape LEGO ratings
-def scrape_lego_ratings_task(**kwargs):
-    task_instance = kwargs["task_instance"]
-    set_numbers = task_instance.xcom_pull(task_ids="get_sets_by_year_task")
-    main(set_numbers)  # Call the new scraping script
+def xlsx_to_parquet():
+    # Read the Excel file into a pandas DataFrame
+    df = pd.read_excel(f"{AIRFLOW_HOME}/lego_final_data.xlsx")
+    # Write the DataFrame to a Parquet file
+    df.to_parquet(f"{AIRFLOW_HOME}/lego_final_data.parquet")
+    return df
 
 
 with local_workflow:
 
-    get_sets_by_year_task = PythonOperator(
-        task_id="get_sets_by_year_task",
-        python_callable=query_bigquery_table,
-        op_kwargs={"years": np.arange(1949, 2025).tolist()},  # Provide a list of years you want to get sets for
-        dag=local_workflow,
+    download_file_task = BashOperator(
+        task_id="download_file_task",
+        bash_command=f"curl -L -o {AIRFLOW_HOME}/lego_final_data.xlsx https://mostwiedzy.pl/en/open-research-data/data-on-lego-sets-release-dates-and-retail-prices-combined-with-aftermarket-transaction-prices-betwe,10210741381038465-0/download",
     )
 
-    scrape_lego_ratings_task = PythonOperator(
-        task_id="scrape_lego_ratings_task",
-        python_callable=scrape_lego_ratings_task,
-        provide_context=True,
-        dag=local_workflow,
+    # convert xlsx to parquet
+    convert_to_parquet_task = PythonOperator(
+        task_id="convert_to_parquet_task",
+        python_callable=xlsx_to_parquet,
     )
 
     local_to_gcs_task = PythonOperator(
@@ -54,9 +52,7 @@ with local_workflow:
         python_callable=upload_to_gcs_callable,
         op_kwargs={
             "bucket": BUCKET,
-            "src_files_path": [
-                os.path.join(AIRFLOW_HOME, "brick_insights_ratings_and_reviews.parquet")
-            ],
+            "src_files_path": [os.path.join(AIRFLOW_HOME, "lego_final_data.parquet")],
         },
         dag=local_workflow,
     )
@@ -67,15 +63,13 @@ with local_workflow:
             "tableReference": {
                 "projectId": PROJECT_ID,
                 "datasetId": "lego_raw",
-                "tableId": "brick_insights_ratings_and_reviews",
+                "tableId": "lego_final_data",
             },
             "externalDataConfiguration": {
                 "sourceFormat": "PARQUET",
                 "autodetect": True,
                 "skipLeadingRows": 1,  # In case the file has a header
-                "sourceUris": [
-                    f"gs://{BUCKET}/raw/brick_insights_ratings_and_reviews.parquet"
-                ],
+                "sourceUris": [f"gs://{BUCKET}/raw/lego_final_data.parquet"],
             },
         },
         dag=local_workflow,
@@ -83,8 +77,8 @@ with local_workflow:
 
     # Define the task dependencies
     (
-        get_sets_by_year_task
-        >> scrape_lego_ratings_task
+        download_file_task
+        >> convert_to_parquet_task
         >> local_to_gcs_task
         >> external_table_task
     )

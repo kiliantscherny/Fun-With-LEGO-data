@@ -1,2 +1,11 @@
 apache-airflow-providers-google
 pyarrow
+sqlalchemy
+psycopg2-binary
+openpyxl
+pandas
+numpy
+google-cloud-bigquery
+google-cloud-storage
+tenacity
+bs4
