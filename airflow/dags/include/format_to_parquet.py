@@ -5,21 +5,6 @@ from datetime import datetime
 import csv
 import os
 
-# SOURCE_FILE_NAMES = [
-#     "themes",
-#     "colors",
-#     "part_categories",
-#     "parts",
-#     "part_relationships",
-#     "elements",
-#     "sets",
-#     "minifigs",
-#     "inventories",
-#     "inventory_parts",
-#     "inventory_sets",
-#     "inventory_minifigs",
-# ]
-
 
 # Preprocesses the CSV file to take care of rows with missing columns
 def preprocess_csv(src_file):
@@ -27,11 +12,15 @@ def preprocess_csv(src_file):
         with open(src_file, "r", newline="", errors="ignore") as file:
             reader = csv.reader(file)
             header_row = next(reader)  # Read the header row
-            expected_num_columns = len(header_row)  # Determine the number of columns based on the header
+            expected_num_columns = len(
+                header_row
+            )  # Determine the number of columns based on the header
 
             # Add "inserted_at" to the header row
             header_row.append("inserted_at")
-            cleaned_rows = [header_row]  # Add the updated header row to the cleaned rows
+            cleaned_rows = [
+                header_row
+            ]  # Add the updated header row to the cleaned rows
 
             # Iterate over each row in the CSV
             for row in reader:
@@ -43,7 +32,7 @@ def preprocess_csv(src_file):
                     row = row[:expected_num_columns]
 
                 # Add the current timestamp to the row
-                row.append(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                row.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                 cleaned_rows.append(row)
 
         # Write the cleaned rows back to the original CSV file
@@ -73,34 +62,3 @@ def format_to_parquet_callable(src_file_names):
 
         # Delete the original csv file
         os.remove(src_file)
-
-
-# # The tables from Rebrickable that we can use
-# SOURCE_FILE_NAMES = [
-#     "themes",
-#     "colors",
-#     "part_categories",
-#     "parts",
-#     "part_relationships",
-#     "elements",
-#     "sets",
-#     "minifigs",
-#     "inventories",
-#     "inventory_parts",
-#     "inventory_sets",
-#     "inventory_minifigs",
-# ]
-
-# # The output CSV file names
-# OUTPUT_CSV_FILE_NAMES = [
-#         source_file
-#         + "_"
-#         + "2024-03-03"
-#         + ".csv"
-#         for source_file in SOURCE_FILE_NAMES
-#     ]
-
-
-# # print(OUTPUT_CSV_FILE_NAMES)
-
-# format_to_parquet_callable(OUTPUT_CSV_FILE_NAMES)
