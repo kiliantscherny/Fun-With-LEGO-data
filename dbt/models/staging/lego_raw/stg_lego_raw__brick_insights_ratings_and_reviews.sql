@@ -2,7 +2,7 @@ WITH
 
 source AS (
 
-    SELECT * FROM {{ source('lego_raw', 'brick_insights_ratings_reviews_post_2000') }}
+    SELECT * FROM {{ source('lego_raw', 'brick_insights_ratings_and_reviews') }}
 
 ),
 

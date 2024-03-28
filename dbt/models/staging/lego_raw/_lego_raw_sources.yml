@@ -4,8 +4,7 @@ sources:
   - name: lego_raw
     database: "dtc-de-kilian"
     tables:
-      - name: brick_insights_ratings_reviews_pre_2000
-      - name: brick_insights_ratings_reviews_post_2000
+      - name: brick_insights_ratings_and_reviews
       - name: colors
       - name: elements
       - name: inventories
