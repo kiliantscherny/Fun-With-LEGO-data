@@ -111,7 +111,7 @@ def main(lego_sets):
     print(df)
 
     parquet_file_path = os.path.join(
-        AIRFLOW_HOME, "brick_insights_ratings_reviews.parquet"
+        AIRFLOW_HOME, "brick_insights_ratings_and_reviews.parquet"
     )
     df.to_parquet(parquet_file_path, index=False)
     print(f"DataFrame saved to {parquet_file_path}")
