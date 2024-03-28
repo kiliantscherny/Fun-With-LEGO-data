@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: stg_lego_raw__brick_insights_ratings_reviews
+  - name: stg_lego_raw__brick_insights_ratings_and_reviews
     description: >
       This model contains review and rating data about LEGO sets from
       Brick Insights, which aggregates these from across the web.

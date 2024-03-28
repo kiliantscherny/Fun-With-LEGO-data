@@ -1,5 +1,5 @@
 WITH reviews AS (
-    SELECT * EXCEPT (fetched_at) FROM {{ ref('stg_lego_raw__brick_insights_ratings_reviews') }}
+    SELECT * EXCEPT (fetched_at) FROM {{ ref('stg_lego_raw__brick_insights_ratings_and_reviews') }}
 ),
 
 sets AS (SELECT * EXCEPT (inserted_at) FROM {{ ref('stg_lego_raw__sets') }}),
