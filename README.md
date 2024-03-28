@@ -131,6 +131,8 @@ Brick Insights offers a Data Export via an API. The data is available in JSON fo
 
 A set can have multiple reviews from different websites, each with a rating and a review snippet. This enables us to later analyze the average rating, the range within the ratings of a given set, the average number of reviews, among many other things.
 
+Note that there is a large number of reviews available, and getting all of them is time-consuming (it took my script _11 hours 30 minutes_ to try to get all the reviews for all of the 22,485 sets available at the time of writing). For this reason, when replicating this, you may want to limit the number of years for which you want to get the data.
+
 ### LEGO data from Gdańsk University of Technology[^1] (henceforth "Aggregated Data")
 
 From [the documentation](https://mostwiedzy.pl/en/open-research-data/data-on-lego-sets-release-dates-and-retail-prices-combined-with-aftermarket-transaction-prices-betwe,10210741381038465-0):
