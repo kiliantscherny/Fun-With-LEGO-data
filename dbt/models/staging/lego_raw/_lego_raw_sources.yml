@@ -18,3 +18,4 @@ sources:
       - name: parts
       - name: sets
       - name: themes
+      - name: lego_final_data
