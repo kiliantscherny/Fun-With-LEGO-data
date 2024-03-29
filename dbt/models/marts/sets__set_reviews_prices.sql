@@ -35,4 +35,4 @@ SELECT
     sets_pricing.lowest_international_retail_price_eur,
     sets_pricing.highest_international_retail_price_eur
 FROM reviews_per_set
-INNER JOIN sets_pricing ON reviews_per_set.clean_set_num = sets_pricing.set_num
+LEFT JOIN sets_pricing ON reviews_per_set.clean_set_num = sets_pricing.set_num
