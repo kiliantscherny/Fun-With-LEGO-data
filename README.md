@@ -247,3 +247,13 @@ I'm primarily interested in answering questions around sets, prices, ratings and
    - Connect your BigQuery project to Looker Studio by following [the guide](https://support.google.com/looker-studio/answer/6370296?hl=en#zippy=%2Cin-this-article)
    - Connect your Looker Studio instance to the production run dataset(s) in BigQuery
    - You'll be able to generate insights based on the transformed data in BigQuery
+
+## [Dashboard](https://lookerstudio.google.com/reporting/77580abe-d941-4b1c-9a73-61b0b34bcb6c)
+
+Follow the link above or click the image below to go to the Looker Studio Dashboard.
+
+[![](images/Fun_with_LEGO_data.jpg)](https://lookerstudio.google.com/reporting/77580abe-d941-4b1c-9a73-61b0b34bcb6c)
+
+## Contact
+
+If you have any questions or feedback, feel free to reach out to me on [LinkedIn](https://www.linkedin.com/in/kiliantscherny/) or through the [DTC Slack community](https://datatalks-club.slack.com/team/U05ADPP9KFF)!
