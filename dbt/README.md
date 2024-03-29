@@ -1,15 +1,22 @@
-Welcome to your new dbt project!
+# dbt LEGO models
+This directory houses all of the dbt resources needed to transform the raw data ingested into BigQuery by Airflow.
 
-### Using the starter project
+## Running the models
 
-Try running the following commands:
-- dbt run
-- dbt test
+To run everything and materialize it in your `dev` schema, execute:
 
+```bash
+$ dbt build
+```
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [dbt community](https://getdbt.com/community) to learn from other analytics engineers
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+This will run all of the models in the dbt DAG and also execute all of the tests.
+
+## Viewing documentation
+
+All of the models in the `models` directory, as well as the macro in `macros`, are documented with their own properties file (a `.yaml` file with the same name).
+
+To generate and view the dbt docs site locally, make sure you first ran all of the models locally, and then simply execute the following command:
+
+```bash
+$ dbt docs generate && dbt docs serve
+```
