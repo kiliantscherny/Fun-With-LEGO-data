@@ -1,7 +1,9 @@
 version: 2
 
 sources:
+# TODO: Change the schema name to match your own (this is the dataset name in BigQuery)
   - name: lego_raw
+  # TODO: Change the database name to match your own (this is the project name in Google Cloud)
     database: "dtc-de-kilian"
     tables:
       - name: brick_insights_ratings_and_reviews
