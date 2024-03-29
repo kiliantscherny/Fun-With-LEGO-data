@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: sets__set_reviews
+  - name: sets__set_reviews_prices
     description: >
       This model joins together key information about sets, reviews,
       ratings and themes.

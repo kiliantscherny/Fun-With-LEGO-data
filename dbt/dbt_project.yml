@@ -48,3 +48,7 @@ models:
     # Applies to all files under models/example/
     staging:
       +materialized: view
+    intermediate:
+      +materialized: ephemeral
+    marts:
+      +materialized: table
