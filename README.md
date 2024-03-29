@@ -174,28 +174,41 @@ Scraping the LEGO website is a time-consuming process and can be difficult to do
 >- Transforming the data in the data warehouse: prepare it for the dashboard
 >- Building a dashboard to visualize the data
 
-### My topic
-I'm going to build a dashboard to visualize the data from the Rebrickable database, Brick Insights and the Aggregated Lego data.
+### Problem area
+There are thousands of LEGO sets that have been released over the years, spanning many different themes and sizes. But how does the LEGO community feel about these sets and how do the prices of these sets also come into play? It would be super interesting to understand not only the in-depth details about the contents of each LEGO set, but also their popularity, average retail price, and much more.
 
-The dashboard will allow you to easily explore data about LEGO sets, enriched with information about their price, rating and more.
+It's a complex thing to try to solve, but this is my attempt at just that.
 
-I'm primarily interested in answering questions around sets, prices, ratings and reviews. However, due to the large amount of data available, there are many other questions that could be answered with this data – I'm just going to tackle a few, but feel free to explore more!
+In this project, I'm primarily interested in answering questions around sets, prices, ratings and reviews. However, due to the large amount of data available, there are many other questions that could be answered with this data – I'm just going to tackle a few, but feel free to explore more!
 
-### My approach
+### My approach: how it works
 
-1. **Extract (`E`): Airflow & Python scripts**
+1. **Extract (`E`): Airflow & Python scripts for batch processing**
    - Download the complete Rebrickable database
    - Use the Brick Insights API to get reviews and ratings information about each set
+   - Download the aggregated data file from the GUT website
    - [Optional] scrape LEGO's website for more information
 2. **Load (`L`): GCP Cloud Storage and BigQuery**
-   - Store the extracted data in a data lake
-   - Load the data into a data warehouse
-3. **Transform (`T`): dbt Cloud**
+   - Convert all files to Parquet format
+   - Store the extracted and converted data file in a data lake (GCP Bucket)
+   - Load the data into a data warehouse by creating BigQuery External tables pointing to the Parquet files in the GCS Bucket
+4. **Transform (`T`): dbt Cloud**
    - Create a data pipeline for processing the different data sources
+       - Use `staging` (basic cleaning, `view` materialization), `intermediate` (transformation, `ephemeral` materialization), and `marts` (final aggregation & presentation, `table` materialization)
    - Clean, transform, test and document the data to increase its usefulness for analytics
-4. **Visualize (`V`): Looker Studio**
+       - Cast columns to the correct data types, document all fields, add appropriate testing to check assumptions
+5. **Visualize (`V`): Looker Studio**
    - Connect Looker Studio to the BigQuery project
    - Build a dashboard to visualize the data
+  
+### Orchestration and scheduling
+
+Since this project is orchestrated with Airflow, you have the option to run each DAG once, or set them to run on a schedule to batch process the data from each source.
+
+- The Rebrickable database is constantly updated, so this makes sense to continuously update if you want the freshest data.
+- The Brick Insights API seems to be regularly updated as well, so you may wish to keep this DAG running on a schedule too.
+- The aggregated LEGO data from GUT is a single file that isn't being updated, so in this case you should forgo scheduling this DAG to run more than once.
+- Optionally, should you wish to scrape the LEGO website, this is something you will probably want to schedule to run frequently as new sets get added or the page information gets updated.
 
 
 ![Data Flow Diagram](images/data_flow_diagram.png)
