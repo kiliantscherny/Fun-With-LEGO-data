@@ -6,8 +6,13 @@ import csv
 import os
 
 
-# Preprocesses the CSV file to take care of rows with missing columns
 def preprocess_csv(src_file):
+    """
+    Preprocesses the CSV file to take care of rows with missing columns.
+
+    Args:
+    - src_file (str): Path to the source CSV file.
+    """
     try:
         with open(src_file, "r", newline="", errors="ignore") as file:
             reader = csv.reader(file)
@@ -44,14 +49,18 @@ def preprocess_csv(src_file):
         pass
 
 
-# Function to convert CSV to Parquet
 def format_to_parquet_callable(src_file_names):
+    """
+    Converts CSV files to Parquet files.
+
+    Args:
+    - src_file_names (list of str): List of source file names.
+    """
     for src_file in src_file_names:
         if not src_file.endswith(".csv"):
             logging.error("Can only accept source files in CSV format, for the moment")
             continue
 
-        # Preprocess the CSV file
         preprocess_csv(src_file)
 
         # Read the preprocessed CSV file into a PyArrow table

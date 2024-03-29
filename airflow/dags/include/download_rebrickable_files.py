@@ -13,12 +13,9 @@ def download_files_callable(url, file_names, airflow_home_directory):
     - url (str): URL of the webpage containing the files.
     - file_names (list of str): List of file names to be downloaded.
     """
-    # Send a GET request to the webpage
     response = requests.get(url)
 
-    # Check if the request was successful (status code 200)
     if response.status_code == 200:
-        # Parse the HTML content of the webpage
         soup = BeautifulSoup(response.content, "html.parser")
 
         # Iterate over each file name and download the corresponding file

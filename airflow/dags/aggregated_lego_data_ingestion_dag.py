@@ -17,9 +17,9 @@ AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow/")
 local_workflow = DAG(
     "AGGREGATED_LEGO_DATA_INGESTION",
     schedule_interval="0 8 * * 1",  # Run the DAG every Monday at 8:00 AM
-    start_date=datetime(2024, 3, 1),
-    end_date=datetime(2024, 3, 27),
-    catchup=False,
+    start_date=datetime(2024, 3, 1),  # Change to anything you like
+    end_date=datetime(2024, 3, 27),  # Change to anything you like
+    catchup=False,  # Do not backfill missed runs
     max_active_runs=1,  # Limits concurrent runs to 3
     default_args={"retries": 3},  # Set the number of retries to 3
     tags=["Lego Data"],
@@ -36,17 +36,19 @@ def xlsx_to_parquet():
 
 with local_workflow:
 
+    # Download the file from the URL
     download_file_task = BashOperator(
         task_id="download_file_task",
         bash_command=f"curl -L -o {AIRFLOW_HOME}/lego_final_data.xlsx https://mostwiedzy.pl/en/open-research-data/data-on-lego-sets-release-dates-and-retail-prices-combined-with-aftermarket-transaction-prices-betwe,10210741381038465-0/download",
     )
 
-    # convert xlsx to parquet
+    # Convert .xlsx file to .parquet
     convert_to_parquet_task = PythonOperator(
         task_id="convert_to_parquet_task",
         python_callable=xlsx_to_parquet,
     )
 
+    # Upload the Parquet file to GCS
     local_to_gcs_task = PythonOperator(
         task_id="local_to_gcs_task",
         python_callable=upload_to_gcs_callable,
@@ -57,6 +59,7 @@ with local_workflow:
         dag=local_workflow,
     )
 
+    # Create an external table in BigQuery
     external_table_task = BigQueryCreateExternalTableOperator(
         task_id="external_table_task",
         table_resource={
@@ -75,13 +78,13 @@ with local_workflow:
         dag=local_workflow,
     )
 
+    # Cleanup the local files
     cleanup_task = BashOperator(
         task_id="cleanup_task",
         bash_command=f"rm -f {AIRFLOW_HOME}/lego_final_data.parquet \
             {AIRFLOW_HOME}/lego_final_data.xlsx",
     )
 
-    # Define the task dependencies
     (
         download_file_task
         >> convert_to_parquet_task

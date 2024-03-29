@@ -41,8 +41,6 @@ SOURCE_FILE_NAMES = [
     "inventory_minifigs",
 ]
 
-# EXECUTION_TIMESTAMP = "{{ execution_date.strftime('%Y-%m-%d') }}"
-
 # The output CSV file names
 OUTPUT_CSV_FILE_NAMES = [source_file + ".csv" for source_file in SOURCE_FILE_NAMES]
 
@@ -54,9 +52,9 @@ OUTPUT_PARQUET_FILE_NAMES = [
 local_workflow = DAG(
     "REBRICKABLE_DATA_INGESTION",
     schedule_interval="0 7 * * 1",  # Run the DAG every Monday at 7:00 AM
-    start_date=datetime(2024, 3, 1),
-    end_date=datetime(2024, 3, 27),
-    catchup=False,
+    start_date=datetime(2024, 3, 1),  # Change to anything you like
+    end_date=datetime(2024, 3, 27),  # Change to anything you like
+    catchup=False,  # Do not backfill missed runs
     max_active_runs=1,  # Limits concurrent runs to 3
     default_args={"retries": 3},  # Set the number of retries to 3
     tags=["Lego Data"],
@@ -64,6 +62,7 @@ local_workflow = DAG(
 
 with local_workflow:
 
+    # Downloads the CSV files from Rebrickable
     download_files_task = PythonOperator(
         task_id="download_files_task",
         python_callable=download_files_callable,
@@ -71,23 +70,23 @@ with local_workflow:
             "url": "https://rebrickable.com/downloads/",
             "file_names": SOURCE_FILE_NAMES,
             "airflow_home_directory": AIRFLOW_HOME,
-            # "execution_timestamp": EXECUTION_TIMESTAMP,
         },
     )
 
+    # Simply shows what files got dowloaded to AIRFLOW_HOME
     show_files_task = BashOperator(
         task_id="show_files_task",
         bash_command=f"ls -l {AIRFLOW_HOME}",
     )
 
-    # This operator is a BashOperator that decompresses the .csv.gz file to a .csv file
+    # Decompresses the CSV files
     decompress_task = BashOperator(
         task_id="decompress_task",
         # Unzip all of the csv.gz files
         bash_command=f"find {AIRFLOW_HOME} -type f -name '*.gz' -exec gunzip -f {{}} +",
     )
 
-
+    # Formats the CSV files to Parquet
     format_to_parquet_task = PythonOperator(
         task_id="format_to_parquet_task",
         python_callable=format_to_parquet_callable,
@@ -97,8 +96,7 @@ with local_workflow:
         },
     )
 
-    # This operator is a PythonOperator that uploads the parquet file to GCS
-    # TODO: Homework - research and try XCOM to communicate output values between 2 tasks/operators
+    # Uploads the Parquet files to GCS
     local_to_gcs_task = PythonOperator(
         task_id="local_to_gcs_task",
         python_callable=upload_to_gcs_callable,
@@ -111,8 +109,13 @@ with local_workflow:
         },
     )
 
-    # Define a function to create BigQuery external tables
     def create_external_table(parquet_file):
+        """
+        Creates an external table in BigQuery for the given Parquet file.
+
+        Args:
+        - parquet_file: The name of the Parquet file to create the external table for
+        """
         return BigQueryCreateExternalTableOperator(
             task_id=f"create_external_table_{parquet_file.replace('.parquet', '')}",
             table_resource={
@@ -126,7 +129,7 @@ with local_workflow:
                     "sourceUris": [f"gs://{BUCKET}/raw/{parquet_file}"],
                 },
             },
-            dag=local_workflow,  # Add the DAG directly here
+            dag=local_workflow,
         )
 
     # Create a task group for creating external tables
@@ -134,9 +137,9 @@ with local_workflow:
         # Loop over each Parquet file and define a task to create external table
         for parquet_file in OUTPUT_PARQUET_FILE_NAMES:
             create_external_table_task = create_external_table(parquet_file)
-            create_external_table_task.dag = local_workflow  # Add the task to the DAG
+            create_external_table_task.dag = local_workflow
 
-    # Bash Operator that removes all the files created in the process
+    # Cleans up the local files
     cleanup_task = BashOperator(
         task_id="cleanup_task",
         bash_command=f"rm -f {AIRFLOW_HOME}/*.csv.gz \
@@ -144,6 +147,7 @@ with local_workflow:
                 {AIRFLOW_HOME}/*.parquet",
     )
 
+    # A pre-cleanup task in case the files already exist
     pre_cleanup_task = BashOperator(
         task_id="pre_cleanup_task",
         bash_command=f"rm -f {AIRFLOW_HOME}/*.csv.gz \

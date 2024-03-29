@@ -5,24 +5,30 @@ from datetime import datetime
 from tenacity import retry, wait_fixed, stop_after_attempt
 import time
 
-# Define the BrickInsights API endpoint
 API_ENDPOINT = "https://brickinsights.com/api/sets/{}"
 
 # Default value for AIRFLOW_HOME if not set
 AIRFLOW_HOME = os.getenv("AIRFLOW_HOME", ".")
 
-# Global variable to store sets that encountered 429 error
+# Variable to store sets that encountered 429 error
 retry_sets = []
 
 
 @retry(wait=wait_fixed(60), stop=stop_after_attempt(3))
-def fetch_rating(set_id, timeout=10):  # Set the timeout to 10 seconds by default
+def fetch_rating(set_id, timeout=10):  # Set the timeout to 10 seconds by default (can be changed)
+    """
+    Fetch the rating for a given LEGO set from the Brick Insights API.
+
+    Args:
+    - set_id (str): The set number of the LEGO set.
+    - timeout (int): The timeout for the API request.
+    """
     url = API_ENDPOINT.format(set_id)
     print("\033[36m" + f"🔍 Looking for ratings from set {set_id}." + "\033[0m")
     try:
         response = requests.get(url, timeout=timeout)  # Set the timeout here
 
-        # Introduce a 3-second pause between requests
+        # Introduce a 1 second pause between requests to not overload the API (which will cause 429 errors)
         time.sleep(1)
 
         if response.status_code == 200:
@@ -86,7 +92,7 @@ def fetch_rating(set_id, timeout=10):  # Set the timeout to 10 seconds by defaul
         return []
 
 
-def main(lego_sets):
+def brick_insights_ingestion_callable(lego_sets):
     results = []
     total_sets = len(lego_sets)
     for idx, set_id in enumerate(lego_sets, start=1):
@@ -117,6 +123,7 @@ def main(lego_sets):
     print(f"DataFrame saved to {parquet_file_path}")
 
 
+# To test the script locally
 if __name__ == "__main__":
     lego_sets = [
         "0003977811-1",
@@ -126,4 +133,4 @@ if __name__ == "__main__":
         "1010206-1",
     ]  # Define your LEGO sets here
     print("\033[95m" + "Starting to fetch set data..." + "\033[0m")
-    main(lego_sets)
+    brick_insights_ingestion_callable(lego_sets)

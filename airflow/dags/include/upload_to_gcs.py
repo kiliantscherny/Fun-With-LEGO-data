@@ -7,8 +7,9 @@ def upload_to_gcs_callable(bucket, src_files_path):
     """
     Uploads Parquet files to GCS.
 
-    :param bucket: GCS bucket name
-    :param src_files_path: List of local Parquet files to upload
+    Args:
+    - bucket: GCS bucket name
+    - src_files_path: List of local Parquet files to upload
     """
     # Create a GCS client
     client = storage.Client()
