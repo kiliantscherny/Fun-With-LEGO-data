@@ -10,7 +10,7 @@ renamed AS (
 
     SELECT
         setid AS brickset_set_id,
-        number AS set_num,
+        SAFE_CAST(number AS STRING) AS set_num,
         numbervariant AS number_variant,
         name AS set_name,
         year AS release_year,
@@ -18,17 +18,11 @@ renamed AS (
         themegroup AS theme_group,
         subtheme AS sub_theme,
         category,
-        pieces AS n_pieces,
-        minifigs AS n_minifigs,
-        ownedby AS n_users_owned_by,
-        wantedby AS n_users_wanted_by,
         rating,
         reviewcount AS review_count,
         packagingtype AS packaging_type,
         availability,
         instructionscount AS instructions_count,
-        minage AS min_recommended_age,
-        maxage AS max_recommended_age,
         tags,
         urlretailpricecheckpln AS retail_price_check_pln_url,
         us_retailprice AS us_retail_price_usd,
@@ -39,17 +33,31 @@ renamed AS (
         pricemonthpln AS price_month_pln,
         status AS set_status,
         urlretailpricehistorypln AS retail_price_pln_history_url,
+        SAFE_CAST(pieces AS INT64) AS n_pieces,
+        SAFE_CAST(minifigs AS INT64) AS n_minifigs,
+        SAFE_CAST(ownedby AS INT64) AS n_users_owned_by,
+        SAFE_CAST(wantedby AS INT64) AS n_users_wanted_by,
+        SAFE_CAST(minage AS INT64) AS min_recommended_age,
+        SAFE_CAST(maxage AS INT64) AS max_recommended_age,
         SAFE_CAST(released AS BOOL) AS is_released,
-        SAFE_CAST(lastupdated AS TIMESTAMP) AS last_updated_at,
-        SAFE_CAST(us_datefirstavailable AS DATE) AS us_date_first_available,
-        SAFE_CAST(us_datelastavailable AS DATE) AS us_date_last_available,
-        SAFE_CAST(uk_datefirstavailable AS DATE) AS uk_date_first_available,
-        SAFE_CAST(uk_datelastavailable AS DATE) AS uk_date_last_available,
-        SAFE_CAST(ca_datefirstavailable AS DATE) AS ca_date_first_available,
-        SAFE_CAST(ca_datelastavailable AS DATE) AS ca_date_last_available,
-        SAFE_CAST(de_datefirstavailable AS DATE) AS de_date_first_available,
-        SAFE_CAST(de_datelastavailable AS DATE) AS de_date_last_available,
-        SAFE_CAST(date AS DATE) AS price_date
+        SAFE_CAST(TIMESTAMP(lastupdated) AS DATE) AS last_updated_date,
+        SAFE_CAST(TIMESTAMP(us_datefirstavailable) AS DATE)
+            AS us_date_first_available,
+        SAFE_CAST(TIMESTAMP(us_datelastavailable) AS DATE)
+            AS us_date_last_available,
+        SAFE_CAST(TIMESTAMP(uk_datefirstavailable) AS DATE)
+            AS uk_date_first_available,
+        SAFE_CAST(TIMESTAMP(uk_datelastavailable) AS DATE)
+            AS uk_date_last_available,
+        SAFE_CAST(TIMESTAMP(ca_datefirstavailable) AS DATE)
+            AS ca_date_first_available,
+        SAFE_CAST(TIMESTAMP(ca_datelastavailable) AS DATE)
+            AS ca_date_last_available,
+        SAFE_CAST(TIMESTAMP(de_datefirstavailable) AS DATE)
+            AS de_date_first_available,
+        SAFE_CAST(TIMESTAMP(de_datelastavailable) AS DATE)
+            AS de_date_last_available,
+        PARSE_DATE('%Y-%m', `date`) AS price_date
 
     FROM source
 
