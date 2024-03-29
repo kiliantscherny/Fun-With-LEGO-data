@@ -20,16 +20,23 @@
 <h1 align="center">Fun with LEGO data</h1>
 <p align="center">Data Talks Club Data Engineering ZoomCamp final project <img src="images/Lego-Bricks-Stacked.png" alt="Stacked Lego Bricks" height="15" width="15"> by <a href="https://www.linkedin.com/in/kiliantscherny/"> Kilian Tscherny</a></p>
 
-## Introduction
-LEGO is one of my favourite things in the world. I've been playing with it since I was a child and I still enjoy it today. I've always been fascinated by the endless possibilities of building something new and unique with just a few bricks. I also love the idea of reusing and repurposing old bricks to create something new. This is why I chose to work with LEGO data for my final project in the Data Talks Club Data Engineering ZoomCamp.
+## Quickstart
+>[!TIP]
+>Want to dive right in and see the dashboard? Here's the link: [Looker Studio dashboard](https://lookerstudio.google.com/reporting/77580abe-d941-4b1c-9a73-61b0b34bcb6c).
+>
+>Want to run this locally? Skip to that part here: [How to reproduce this project locally](#how-to-reproduce-this-project-locally).
 
-Even better, there is a large LEGO fan community online and plenty of interesting data about the many products LEGO has released over the years.
+## Introduction
+LEGO is one of my favourite toys in the world. Growing up, I was always spending much of my free time building sets or new creations, which to this day I still really enjoy. When it came to choosing a project for this course, LEGO was almost a no-brainer.
+
+Even better, there is a large LEGO fan community online and plenty of interesting data about the many products LEGO has released over the years. This project aims to explore some of this data and build a dashboard to visualize it.
 
 ## Data
 In this project I'm exploring a few different sources of data:
 1. Rebrickable's [database](https://rebrickable.com/downloads/) of LEGO sets, parts, themes and more – updated daily and published as CSVs
 2. Brick Insights, which offers a [Data Export](https://brickinsights.com/api/sets/export) via an API on interesting information like price, rating, number of reviews and more
-3. LEGO's own website, which can be scraped for additional information
+3. Some LEGO data from researchers at the Gdańsk University of Technology, which includes information about LEGO sets release dates and retail prices
+4. LEGO's own website, which can be scraped for additional information (note: the use of this was ultimately not included in the project, but I have kept any code related to this in this repository)
 
 ### Rebrickable
 There are 12 different tables in the Rebrickable database:
@@ -140,7 +147,7 @@ From [the documentation](https://mostwiedzy.pl/en/open-research-data/data-on-leg
 >
 > The data was downloaded from three sources. LEGO sets retail prices, release dates, and IDs were downloaded from Brickset.com, where one can find the ID number of each set that was released by Lego and its retail prices. The current status of the sets was downloaded from Lego.com and the retail prices for Poland and prices from aftermarket transactions were downloaded from promoklocki.pl. The data was merged based on the official LEGO set ID.
 
-I'm using this dataset primarily for the set price data, which offers some unique insights opportunities. Thank you to the authors for making this data available to the public.
+I'm using this dataset primarily for the set price data, which offers some unique insights opportunities. Huge thank you to the authors for making this data available for reuse.
 
 
 [^1]: Oczkoś, W., Podgórski, B., Szczepańska, W., & Boiński, T. M. (2024). Data on LEGO sets release dates and worldwide retail prices combined with aftermarket transaction prices in Poland between June 2018 and June 2023. Data in Brief, 52, 110056. https://doi.org/10.1016/j.dib.2024.110056
@@ -168,16 +175,11 @@ Scraping the LEGO website is a time-consuming process and can be difficult to do
 >- Building a dashboard to visualize the data
 
 ### My topic
-I'm going to build a dashboard to visualize the data from the Rebrickable database, Brick Insights and LEGO's website.
+I'm going to build a dashboard to visualize the data from the Rebrickable database, Brick Insights and the Aggregated Lego data.
 
 The dashboard will allow you to easily explore data about LEGO sets, enriched with information about their price, rating and more.
 
-This will empower you to answer questions like:
-- Are LEGO sets with more pieces higher rated on average?
-- What is the price per element for different sets?
-- Which themes have the greatest number of ratings?
-
-And much, much more.
+I'm primarily interested in answering questions around sets, prices, ratings and reviews. However, due to the large amount of data available, there are many other questions that could be answered with this data – I'm just going to tackle a few, but feel free to explore more!
 
 ### My approach
 
@@ -190,13 +192,13 @@ And much, much more.
    - Load the data into a data warehouse
 3. **Transform (`T`): dbt Cloud**
    - Create a data pipeline for processing the different data sources
-   - Clean, test, and document the data to increase its usefulness for analytics
+   - Clean, transform, test and document the data to increase its usefulness for analytics
 4. **Visualize (`V`): Looker Studio**
    - Connect Looker Studio to the BigQuery project
    - Build a dashboard to visualize the data
 
 
-![Data Flow Diagram](images/data_flow_diagram.jpg)
+![Data Flow Diagram](images/data_flow_diagram.png)
 
 ## How to reproduce this project locally
 
@@ -233,7 +235,8 @@ And much, much more.
    - Choose which DAG(s) to run:
      - If you want to ingest the Rebrickable database, run the `REBRICKABLE_DATA_INGESTION` DAG (tip: you will need to run this first, before you can run any of the other DAGs, as they are reliant on the `sets` table that is created from it)
      - If you want to get the Brick Insights data, run the `BRICK_INSIGHTS_LEGO_SET_RATINGS` DAG
-     - If you want to scrape the LEGO website, run the `LEGO_WEBSITE_SET_PRICES_RATINGS` DAG
+     - If you want to ingest the Aggregated LEGO data, run the `AGGREGATED_LEGO_DATA_INGESTION` DAG
+     - If you want to scrape the LEGO website (optional), run the `LEGO_WEBSITE_SET_PRICES_RATINGS` DAG
    - Depending on several variables (the number years for which you want set information, your internet connection, etc.), the DAGs can take a while to run (from a few minutes to several hours)
 4. **dbt Cloud: to transform your raw data into something useful**
    - As mentioned above, you will need a dbt Cloud account to do this, but it's perfectly possible to do this with dbt Core (not covered in these instructions, but there are plenty of resources online to help you with this)
@@ -242,4 +245,5 @@ And much, much more.
    - The transformed data will be stored in a new dataset in BigQuery
 5. **Connect your Looker Studio instance to your BigQuery project**
    - Connect your BigQuery project to Looker Studio by following [the guide](https://support.google.com/looker-studio/answer/6370296?hl=en#zippy=%2Cin-this-article)
+   - Connect your Looker Studio instance to the production run dataset(s) in BigQuery
    - You'll be able to generate insights based on the transformed data in BigQuery
