@@ -1,3 +1,13 @@
+{{ config( 
+    materialized='table',
+    partition_by={
+        "field": "last_updated_date",
+        "granularity": "MONTH",
+        "data_type": "date"
+    },
+    cluster_by='set_num'
+)}}
+
 WITH
 
 source AS (
