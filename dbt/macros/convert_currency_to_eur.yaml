@@ -1,0 +1,14 @@
+version: 2
+
+macros:
+  - name: convert_currency_to_eur
+    description: A macro to convert the amount of a source currency to EUR
+
+    arguments:
+      - name: foreign_currency_amount
+        type: string
+        description: The column with the foreign currency amount value in it
+      
+      - name: foreign_currency
+        type: string
+        description: The foreign currency code

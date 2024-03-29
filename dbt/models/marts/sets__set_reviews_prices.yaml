@@ -15,6 +15,12 @@ models:
           - unique:
               severity: error
 
+      - name: clean_set_num
+        description: >
+          The set number, minus any characters after the "-". E.g.
+          '10312-1' becomes '10312'. Required for joining the data
+          from Rebrickable to the research data.
+
       - name: set_name
         description: The set's name
 
@@ -50,3 +56,25 @@ models:
 
       - name: median_rating
         description: The set's median rating
+
+      - name: us_retail_price_eur
+        description: The US retail price converted to EURO
+
+      - name: uk_retail_price_eur
+        description: The UK retail price converted to EURO
+
+      - name: ca_retail_price_eur
+        description: The CA retail price converted to EURO
+
+      - name: pl_retail_price_eur
+        description: The PL retail price converted to EURO
+
+      - name: highest_international_retail_price_eur
+        description: >
+          The highest international retail price out of the countries for which
+          we have data
+
+      - name: lowest_international_retail_price_eur
+        description: >
+          The lowest international retail price out of the countries for which
+          we have data
