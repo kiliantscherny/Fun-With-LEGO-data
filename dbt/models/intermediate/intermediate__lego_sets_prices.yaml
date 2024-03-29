@@ -1,0 +1,156 @@
+version: 2
+
+models:
+  - name: intermediate__lego_sets_prices
+    description: >
+      Model containing aggregated data from Gdańsk University of Technology
+      researchers. All retail price columns are also converted to EURO.
+
+    columns:
+      - name: brickset_set_id
+        description: Internal Brickset.com LEGO set identification number.
+
+      - name: set_num
+        description: Official LEGO set ID.
+        tests:
+          - not_null:
+              severity: error
+
+      - name: number_variant
+        description: Official LEGO set sub-variant (e.g., different minifigure hidden in a random bag).
+
+      - name: set_name
+        description: Official LEGO set name.
+
+      - name: release_year
+        description: The set release year.
+
+      - name: theme_name
+        description: Official name of the set theme.
+
+      - name: theme_group
+        description: Official name of the set theme group (if available).
+
+      - name: sub_theme
+        description: Official name of the set sub-theme (if available).
+
+      - name: category
+        description: Brickset.com internal set type.
+
+      - name: is_released
+        description: Indicates whether the set was officially released (1) or not (0).
+
+      - name: n_pieces
+        description: Number of parts in the set.
+
+      - name: n_minifigs
+        description: Number of minifigures in the set.
+
+      - name: n_users_owned_by
+        description: Number of Brickset.com users claiming they own the set.
+
+      - name: n_users_wanted_by
+        description: Number of Brickset.com users claiming they want to buy the set.
+
+      - name: rating
+        description: Average set rating according to Brickset.com users.
+
+      - name: review_count
+        description: Number of set reviews written by Brickset.com users.
+
+      - name: packaging_type
+        description: Type of packaging for the set (if specified).
+
+      - name: availability
+        description: Indicates whether the set was available in retail shops or only on the official LEGO shop website.
+
+      - name: instructions_count
+        description: Number of books with building instructions added to the set.
+
+      - name: min_recommended_age
+        description: LEGO recommended minimal user age for the set.
+
+      - name: max_recommended_age
+        description: LEGO recommended maximal user age for the set (either not specified or 99).
+
+      - name: tags
+        description: List of Brickset.com assigned set tags.
+
+      - name: last_updated_at
+        description: Date and time of the last update of the data in Brickset.com in ISO 8601 format.
+
+      - name: retail_price_check_pln_url
+        description: URL where retail price in PLN was downloaded from.
+
+      - name: us_retail_price_usd
+        description: Retail price in United States in US dollars.
+
+      - name: us_date_first_available
+        description: Date and time when the set became available in the United States in ISO 8601 format.
+
+      - name: us_date_last_available
+        description: Date and time when the set stopped being officially available in the United States in ISO 8601 format.
+
+      - name: uk_retail_price_gbp
+        description: Retail price in the United Kingdom in GBP.
+
+      - name: uk_date_first_available
+        description: Date and time when the set became available in the United Kingdom in ISO 8601 format.
+
+      - name: uk_date_last_available
+        description: Date and time when the set stopped being officially available in the United Kingdom in ISO 8601 format.
+
+      - name: ca_retail_price_cad
+        description: Retail price in Canada in Canadian dollars.
+
+      - name: ca_date_first_available
+        description: Date and time when the set became available in Canada in ISO 8601 format.
+
+      - name: ca_date_last_available
+        description: Date and time when the set stopped being officially available in Canada in ISO 8601 format.
+
+      - name: de_retail_price_eur
+        description: Retail price in Germany in EUR.
+
+      - name: de_date_first_available
+        description: Date and time when the set became available in Germany in ISO 8601 format.
+
+      - name: de_date_last_available
+        description: Date and time when the set stopped being officially available in Germany in ISO 8601 format.
+
+      - name: pl_retail_price_pln
+        description: Retail price in Poland in PLN.
+
+      - name: price_date
+        description: Year and month for which the PriceMonthPLN is given.
+
+      - name: price_month_pln
+        description: Price in PLN read from promoklocki.pl for the year and month specified in the Date column.
+
+      - name: set_status
+        description: Official status of the set (if available) in LEGO web shop.
+
+      - name: retail_price_pln_history_url
+        description: URL containing retail and aftermarket price changes from the day of the release of the set, in PLN.
+
+      - name: us_retail_price_eur
+        description: The US retail price converted to EURO
+
+      - name: uk_retail_price_eur
+        description: The UK retail price converted to EURO
+
+      - name: ca_retail_price_eur
+        description: The CA retail price converted to EURO
+
+      - name: pl_retail_price_eur
+        description: The PL retail price converted to EURO
+
+      - name: highest_international_retail_price_eur
+        description: >
+          The highest international retail price out of the countries for which
+          we have data
+
+      - name: lowest_international_retail_price_eur
+        description: >
+          The lowest international retail price out of the countries for which
+          we have data
