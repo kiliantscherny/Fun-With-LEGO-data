@@ -21,8 +21,8 @@ from include.format_to_parquet import format_to_parquet_callable
 from include.upload_to_gcs import upload_to_gcs_callable
 
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
+DATASET_ID = os.environ.get("GCP_DATASET_ID")
 BUCKET = os.environ.get("GCP_GCS_BUCKET")
-
 AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow/")
 
 # The tables from Rebrickable that we can use
@@ -121,7 +121,7 @@ with local_workflow:
             table_resource={
                 "tableReference": {
                     "projectId": PROJECT_ID,
-                    "datasetId": "lego_raw",
+                    "datasetId": DATASET_ID,
                     "tableId": parquet_file.replace(".parquet", ""),
                 },
                 "externalDataConfiguration": {

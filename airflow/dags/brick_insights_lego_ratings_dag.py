@@ -12,6 +12,7 @@ from include.retrieve_sets_by_year import query_bigquery_table
 from include.upload_to_gcs import upload_to_gcs_callable
 
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
+DATASET_ID = os.environ.get("GCP_DATASET_ID")
 BUCKET = os.environ.get("GCP_GCS_BUCKET")
 AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow/")
 
@@ -72,7 +73,7 @@ with local_workflow:
         table_resource={
             "tableReference": {
                 "projectId": PROJECT_ID,
-                "datasetId": "lego_raw",
+                "datasetId": DATASET_ID,
                 "tableId": "brick_insights_ratings_and_reviews",
             },
             "externalDataConfiguration": {

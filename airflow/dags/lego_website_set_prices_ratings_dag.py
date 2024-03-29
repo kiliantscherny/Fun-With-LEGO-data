@@ -13,6 +13,7 @@ from include.lego_website_set_rating_price_scraping import get_price_and_rating_
 import asyncio
 
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
+DATASET_ID = os.environ.get("GCP_DATASET_ID")
 BUCKET = os.environ.get("GCP_GCS_BUCKET")
 AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow/")
 
@@ -78,7 +79,7 @@ with local_workflow:
         table_resource={
             "tableReference": {
                 "projectId": PROJECT_ID,
-                "datasetId": "lego_raw",
+                "datasetId": DATASET_ID,
                 "tableId": "lego_website_set_prices_and_ratings",
             },
             "externalDataConfiguration": {

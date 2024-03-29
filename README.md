@@ -213,10 +213,19 @@ I'm primarily interested in answering questions around sets, prices, ratings and
 
 ### Steps
 
+0. **Authenticate with the `gcloud` CLI**
+    ```bash
+    $ gcloud auth application-default login
+    ```
+    Follow the instructions in your browser to authenticate with your Google Cloud account.
+
 1. **Clone the repository to your machine**
-   ```bash
-   gh repo clone kiliantscherny/Fun-With-LEGO
+   ```git
+   $ gh repo clone kiliantscherny/Fun-With-LEGO-data
+   ```
 2. **Terraform: to set up the infrastructure (GCP Cloud Storage & BigQuery)**
+   >[!IMPORTANT]
+   >You will need to set some variables in the `/infrastructure/variables.tf` file to match your GCP project ID, the name of the BigQuery dataset you want to create and the name of the bucket you want to create in Cloud Storage. You can also change the region and location if you want to.
    - `cd` to the `/infrastructure/` folder
    - Update the following variables in the `variables.tf` file:
        - `project_id` – your GCP project ID
@@ -225,19 +234,25 @@ I'm primarily interested in answering questions around sets, prices, ratings and
        - [optionally] the `region` and `location` if you want to change the default values
    - Run `terraform init`, `terraform plan` and `terraform apply` to create the necessary infrastructure
 3. **Airflow: to set up the DAGs that Extract and Load the data**
+   >[!IMPORTANT]
+   > You will need to set your GCP project ID, the name of the BigQuery dataset, and the name of the bucket (which you created in the previous step) in the `/airflow/.env` file. The names must match exactly what you set in the Terraform step.
    - `cd` to the `/airflow/` folder
    - Update the following variables in the `docker-compose.yaml` file:
        - `GCP_PROJECT_ID` – your GCP project ID (the same as in the Terraform step)
        - `GCP_GCS_BUCKET` – the name of the bucket you created in Cloud Storage (also the same as in the Terraform step)
-   - Run `docker-compose build .` to build the image from the `Dockerfile`, then run `docker-compose up airflow-init`, followed by `docker-compose up -d` to start Airflow
+   - Run `docker-compose build` to build the image from the `Dockerfile`, then run `docker-compose up airflow-init`, followed by `docker-compose up -d` to start Airflow
    - Open `localhost:8080` in your browser and run the DAGs you want to extract and load the data
+   - If the webserver isn't responding after a while or the container is unhealthy (after checking with `docker ps`), you might just need to restart the container with `docker-compose restart airflow-webserver`. If that doesn't work, try shutting down all the containers with `docker-compose down --volumes --rmi all` and re-running `docker-compose up -d`
    - [optionally] feel free to update the start and end dates (as well as the crontab) of each DAG to suit your needs if you wish to extract and load the data at different times
    - Choose which DAG(s) to run:
-     - If you want to ingest the Rebrickable database, run the `REBRICKABLE_DATA_INGESTION` DAG (tip: you will need to run this first, before you can run any of the other DAGs, as they are reliant on the `sets` table that is created from it)
+     - If you want to ingest the Rebrickable database, run the `REBRICKABLE_DATA_INGESTION` DAG
+        >[!TIP]
+        >You will need to run this first, before you can run any of the other DAGs, as they are reliant on the `sets` table that is created from it
      - If you want to get the Brick Insights data, run the `BRICK_INSIGHTS_LEGO_SET_RATINGS` DAG
      - If you want to ingest the Aggregated LEGO data, run the `AGGREGATED_LEGO_DATA_INGESTION` DAG
      - If you want to scrape the LEGO website (optional), run the `LEGO_WEBSITE_SET_PRICES_RATINGS` DAG
    - Depending on several variables (the number years for which you want set information, your internet connection, etc.), the DAGs can take a while to run (from a few minutes to several hours)
+   - To stop Airflow, run `docker-compose down --volumes --rmi all`
 4. **dbt Cloud: to transform your raw data into something useful**
    - As mentioned above, you will need a dbt Cloud account to do this, but it's perfectly possible to do this with dbt Core (not covered in these instructions, but there are plenty of resources online to help you with this)
    - Connect your BigQuery project to dbt Cloud by following [the guide](https://docs.getdbt.com/guides/bigquery?step=1)

@@ -61,9 +61,10 @@ x-airflow-common:
     GOOGLE_APPLICATION_CREDENTIALS: /.google/credentials/google_credentials.json
     AIRFLOW_CONN_GOOGLE_CLOUD_DEFAULT: 'google-cloud-platform://?extra__google_cloud_platform__key_path=/.google/credentials/google_credentials.json'
 
-    # TODO: Please change GCP_PROJECT_ID & GCP_GCS_BUCKET, as per your config
-    GCP_PROJECT_ID: 'dtc-de-kilian'
-    GCP_GCS_BUCKET: 'lego-bucket-dtc-de-kilian'
+    # TODO: Please change these variables in the .env file, as per your config
+    GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+    GCP_GCS_BUCKET: ${GCP_GCS_BUCKET}
+    GCP_DATASET_ID: ${GCP_DATASET_ID}
 
   volumes:
     - ./dags:/opt/airflow/dags

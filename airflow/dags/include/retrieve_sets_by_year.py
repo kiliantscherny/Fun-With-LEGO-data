@@ -4,6 +4,7 @@ import numpy as np
 import os
 
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID", ".")
+DATASET_ID = os.environ.get("GCP_DATASET_ID")
 
 
 def query_bigquery_table(years):
@@ -20,7 +21,7 @@ def query_bigquery_table(years):
     years_to_query = ", ".join([str(year) for year in years])
 
     # Execute the query for all years at once
-    query = f"SELECT set_num AS set_number FROM `dtc-de-kilian.lego_raw.sets` WHERE year IN ({years_to_query})"
+    query = f"SELECT set_num AS set_number FROM `{GCP_PROJECT_ID}.{DATASET_ID}.sets` WHERE year IN ({years_to_query})"
     query_job = client.query(query)
 
     # Fetch the results
