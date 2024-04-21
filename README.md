@@ -263,7 +263,7 @@ Since this project is orchestrated with Airflow, you have the option to run each
      - If you want to ingest the Aggregated LEGO data, run the `AGGREGATED_LEGO_DATA_INGESTION` DAG
      - If you want to scrape the LEGO website (optional), run the `LEGO_WEBSITE_SET_PRICES_RATINGS` DAG
 >[!TIP]
->You will need to run `REBRICKABLE_DATA_INGESTION` first, before you can run any of the other DAGs, as they are reliant on the `sets` table that is created from it
+>You will need to run `REBRICKABLE_DATA_INGESTION` first, before you can run any of the other DAGs, as they are reliant on the `sets` table that is created from it. **I have also included the raw data for everything you need in the `~./raw_data` folder, so you can skip this step if you want to – though the data will not be up-to-date.** You will just need to move the files to your GCS bucket and create the external tables yourself.
    - Depending on several variables (the number years for which you want set information, your internet connection, etc.), the DAGs can take a while to run (from a few minutes to several hours)
    - To stop Airflow, run `docker-compose down --volumes --rmi all`
 4. **dbt Cloud: to transform your raw data into something useful**
